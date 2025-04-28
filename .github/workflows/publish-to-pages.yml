@@ -22,7 +22,7 @@ jobs:
           hugo-version: 'latest'
           extended: true
 
-      - run: hugo --minify
+      - run: hugo
 
       - name: Publish
         uses: cloudflare/pages-action@1
