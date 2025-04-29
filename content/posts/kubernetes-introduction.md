@@ -9,8 +9,6 @@ categories: ["Kubernetes"]
 
 > Cette série d'articles m'accompagne dans mon parcours d'apprentissage concernant Kubernetes et la certification CKA (Certified Kubernetes Administrator)
 
----
-
 # Qu'est-ce que Kubernetes ?
 
 Kubernetes ou K8s est un produit open source (ouvert par Google en 2014) qui permet le déploiement, le scaling et la gestion automatique des applications conteneurisées. En d'autres termes, il s'agit d'un orchestrateur de conteneurs.
@@ -107,4 +105,4 @@ Kubernetes ou K8s est un produit open source (ouvert par Google en 2014) qui per
             - [ ] Assignation de pods à un noeud
             - [ ] ...
         - [ ] Administration d'un cluster
-        
+
