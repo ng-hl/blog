@@ -1,6 +1,6 @@
 ---
 date: '2025-04-28T23:53:13+02:00'
-draft: true
+draft: false
 title: 'Kubernetes - Introduction'
 summary: "Introduction à Kubernetes"
 tags: ["kubernetes"]
