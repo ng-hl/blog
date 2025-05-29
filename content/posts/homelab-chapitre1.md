@@ -13,9 +13,9 @@ categories: ["homelab"]
 
 # 1. Le hardware
 
-<> Cette section est susceptible d'évoluer avec le temps. Des évolutions peuvent être appliquées au fur et à mesure du temps avec l'acquisition de plus de compute pour améliorer les performances et la résilience ainsi que la mise en place d'un système de stockage plus adapté comme un NAS.
+> Cette section est susceptible d'évoluer avec le temps. Des évolutions peuvent être appliquées au fur et à mesure du temps avec l'acquisition de plus de compute pour améliorer les performances et la résilience ainsi que la mise en place d'un système de stockage plus adapté comme un NAS.
 
-Pour mettre en place ce homelab, il nous faut un appareil qui dispose de suffisemment de compute soit au moins 32Go de RAM et 16vCPU ainsi qu'un minimum d'espace disque soit 1To. De plus, cet machine va être disponible tout le temps 24h/24 7j/7, il est donc important de prendre une solution qui ne compose pas trop d'énergie.
+Pour mettre en place ce homelab, il nous faut un appareil qui dispose de suffisamment de compute soit au moins 32Go de RAM et 16vCPU ainsi qu'un minimum d'espace disque soit 1To. De plus, cet machine va être disponible tout le temps 24h/24 7j/7, il est donc important de prendre une solution qui ne compose pas trop d'énergie.
 
 | Date      | Compute      | Stockage      | Niveau de maturité      |
 |:-:    |:-:    |:-:    |:-:    |
