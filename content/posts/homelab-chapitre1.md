@@ -13,9 +13,9 @@ categories: ["homelab"]
 
 # 1. Le hardware
 
-> Cette section est susceptible d'évoluer avec le temps. Des évolutions peuvent être appliquées au fur et à mesure du temps avec l'acquisition de plus de compute pour améliorer les performances et la résilience ainsi que la mise en place d'un système de stockage plus adapté comme un NAS.
+<> Cette section est susceptible d'évoluer avec le temps. Des évolutions peuvent être appliquées au fur et à mesure du temps avec l'acquisition de plus de compute pour améliorer les performances et la résilience ainsi que la mise en place d'un système de stockage plus adapté comme un NAS.
 
-Pour mettre en place ce homelab, il nous faut un appareil qui dispose de suffisamment de compute soit au moins 32Go de RAM et 16vCPU ainsi qu'un minimum d'espace disque soit 1To. De plus, cet machine va être disponible tout le temps 24h/24 7j/7, il est donc important de prendre une solution qui ne compose pas trop d'énergie.
+Pour mettre en place ce homelab, il nous faut un appareil qui dispose de suffisemment de compute soit au moins 32Go de RAM et 16vCPU ainsi qu'un minimum d'espace disque soit 1To. De plus, cet machine va être disponible tout le temps 24h/24 7j/7, il est donc important de prendre une solution qui ne compose pas trop d'énergie.
 
 | Date      | Compute      | Stockage      | Niveau de maturité      |
 |:-:    |:-:    |:-:    |:-:    |
@@ -51,17 +51,21 @@ Cette VM sera le point d'entrée vers les ressources du homelab. L'objectif est 
 
 ## 2.4. Serveur Ansible
 
-Le serveur `Ansible` va nous permettre de déployer les configurations des OS que nous déployons. Les actions serons initialisées manuellement dans un premier temps pour nous pourrons intégrer l'outil au sein d'une pipeline via Gitlab plus tard.
+Le serveur `Ansble` va nous permettre de déployer les configurations des OS que nous déployons. Les actions serons initialisées manuellement dans un premier temps pour nous pourrons intégrer l'outil au sein d'une pipeline via Gitlab plus tard.
 
-## 2.5. Serveur de versionning
+## 2.5. Coffre fort numérique
+
+Le coffre fort numérique va nous permettre de stocker divers mots de passe et secrets. Le choix technique se portera sur `VaultWarden`, solution alternative et open source à BitWarden.
+
+## 2.6. Serveur de versionning
 
 Le serveur de versionning permettra la centralisation des différents éléments relatifs à notre infrastructure notammenent concernant l'infrastructure as code avec Terraform et Ansible. De plus, cette VM ouvre la possibilité d'automatiser nos déploiements de VM futures via les runner et les fonctionnalités de la CI/CD. Le choix technique se portera sur la solution `Gitlab-ce`.
 
-## 2.6. Stack d'observabilité
+## 2.7. Stack d'observabilité
 
 L'objectif est de disposer d'outils nous permettant de monitorer et de superviser grâce à la collecte des metriques ainsi qu'à l'alerting. Le choix technique se portera sur la "suite" `Prometheus/Grafana`.
 
-## 2.7. Dashboard central
+## 2.8. Dashboard central
 
 Afin de facilité l'administration du homelab et l'utilisation des différents service, nous allons mettre en place un dashboard moderne et confortable afin d'inventorier l'intégralité des services mis à disposition au sein du homelab. Le choix technique se portera sur `Homepage`
 
@@ -86,7 +90,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum des service
 | Niveau     | Description      | Services     | Déploiement
 |---    |:-:    |:-:    |:-:    |
 | 🐟    | Le homelab est fonctionnel, il est possible de déployer des VMs préconfigurées à la main via des templates.      | Firewall, DNS, machine d'administration     | Template de VM sur Proxmox
-| 🐬     | Le déploiement des VM est uniforme et automatisé. La machine de rebond centralisée peut communiquer avec l'entièreté des machines. Une PKI est en place     | Gitlab-ce, Terraform, Ansible, PKI     | Template de VM sur Proxmox avec Terraform et Ansible dans une pipeline Gitlab CI/CD 
+| 🐬     | Le déploiement des VM est uniforme et automatisé. La machine de rebond centralisée peut communiquer avec l'entièreté des machines. Une PKI est en place et une acme    | Gitlab-ce, Terraform, Ansible, PKI, acme     | Template de VM sur Proxmox avec Terraform et Ansible dans une pipeline Gitlab CI/CD 
 | 🐳    | La stack d'observabilité est en place et le homepage prêt à l'emploi avec une évolution dynamique.     | Prometheus, Grafana, Homepage, notifications (Discord ?)       | Image préconfigurée sur Proxmox avec Terraform et Ansible dans une pipeline Gitlab CI/CD
 
 ---
@@ -192,28 +196,40 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum des service
         - [ ] Création d'une VM
         - [ ] Suppression d'une VM
         - [ ] Récupérer les informations pour avoir un inventaire dynamique
+    - [ ] Nom de domaine
+        - [ ] Réserver un nom de domaine (CloudFlare, Duck DNS, ...)
+        - [ ] Générer le certificat wildcard *.ng-hl.com avec acme.sh
+        - [ ] Gérer le renouvellement automatique avec acme.sh
     - [ ] Append : Coffre fort (Vaultwarden)
-        - [ ] Mise en place de l'OC via les templates
-        - [ ] Configuration de l'OS via Ansible ou manuellement suivant l'exécution de la tâche
-        - [ ] Installation de Vaultwarden
-        - [ ] Configuration de Vaultwarden
-        - [ ] Test d'utilisation
+        - [x] Mise en place de l'OS via les templates
+        - [x] Configuration de l'OS via Ansible ou manuellement suivant l'exécution de la tâche
+        - [x] Installation de Vaultwarden
+        - [x] Configuration de Vaultwarden
+        - [x] Test d'utilisation
         - [ ] Stockage des éléments critiques
             - [ ] PKI
             - [ ] Clés SSH
             - [ ] Attribuer des mots de passes uniques (utilisateur ngobert et root et pfSense)
             - [ ] Intégration avec Gitlab CI
-        - [ ] Tests
+        - [x] Tests
+    - [x] Certificat wildcard *.ng-hl.com
+        - [x] Réservation du nom de domaine
+        - [x] Création du certification
+        - [x] Automatisation du renouvellement du certificat
+            - [x] Configuration de acme + test de renouvellement forcé
+            - [x] Script de déploiement du nouveau certificat (indexé sur la liste des services exposés)
+            - [x] Test de bout en bout
     
 ---
 
 # 7. Inventaire
 
-| Hostname    | IP      | OS        |  
-| :-:       | :-:       | :-:       |
+| Hostname    | IP      | OS        | Hostname exposé
+| :-:       | :-:       | :-:       | :-:       |
 | pfsense-core.homelab    | 192.168.100.254    | Debian 12.10 |   
 | dns-core.homelab    | 192.168.100.253    | Debian 12.10 |    
 | admin-core.homelab    | 192.168.100.252    | Debian 12.10 |    
 | pki-core.homelab | 192.168.100.251 | Debian 12.10 |
-| ansible-core.homelab | 192.168.100.250 | Debian 12.10 | 
-
+| ansible-core.homelab | 192.168.100.250 | Debian 12.10 |
+| acme-core.homelab | 192.168.100.248 | Debian 12.10 |
+| vaultwarden-core.homelab   | 192.168.100.249 | Debian 12.10 | vaultwarden-core.ng-hl.com vaultwarden.ng-hl.com (CNAME) |
