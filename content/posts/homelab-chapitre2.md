@@ -1,7 +1,7 @@
 ---
 date: '2025-06-04T10:39:09+02:00'
 draft: false
-title: 'Homelab Chapitre 2'
+title: 'Homelab - Chapitre 2'
 summary: "Homelab - Chapitre 2 - Proxmox et réseau"
 tags: ["homelab"]
 categories: ["homelab"]
@@ -35,7 +35,7 @@ J'ai récupéré une image ISO sur le [site officiel de Proxmox](https://www.pro
 
 La première étape est de créer un utilisateur appartenant au groupe "Admin" afin de pouvoir se connecter via le Realm "Proxmox VE authentication server" et non pas avec l'utilisateur standard "root" via "Linux PAM". Pour cela, il faut être dans la vue "Server View", cliquer sur "Datacenter", se rendre dans la section "Permissions", puis "Users" et enfin cliquer sur le bouton "Add".
 
-![Création utilisateur admin](/static/images/creation_utilisateur_admin.png)
+![Création utilisateur admin](/images/creation_utilisateur_admin.png)
 
 Il est important d'ajouter le groupe "Admin" dans la section "Group" afin que notre utilisateur puisse disposer de toutes les permissions nécessaires.
 
@@ -44,21 +44,21 @@ Il est important d'ajouter le groupe "Admin" dans la section "Group" afin que no
 Par défaut, sur une installation fraîche de Proxmox VE, des dépôts dans la section "Updates" puis "Repositories" pointent vers des URL adaptées pour la version Entreprise. 
 Il est préférable de désactiver les dépôts qui pointent vers des dépôts Entreprise et d'activer les dépôts "no-subscription" en cliquant sur "Add" et en sélectionnant "No-Subscription" dans le menu déroulant.
 
-![Repos configuration 1](/static/images/repos-configuration-1.png)
+![Repos configuration 1](/images/repos-configuration-1.png)
 
 Voici la configuration que j'obtiens après ces manipulations. A noter, que j'ai désactivé également les dépôts Ceph car ce n'est pas une fonctionnalité que j'utilise dans mon homelab pour le moment.
 
-![Repos configuration 2](/static/images/repos-configuration-2.png)
+![Repos configuration 2](/images/repos-configuration-2.png)
 
 A présent, il ne reste plus qu'à rafraîchir le contenu du cache du gestionnaire de package côté système de Proxmox VE en cliquant sur "Updates" puis "Refresh".
 
-![Update](/static/images/update.png)
+![Update](/images/update.png)
 
 C'est l'équivalent d'un `sudo apt update` sur une GNU/Linux Debian par exemple.
 
 Enfin, pour mettre à jour les paquets remontés par le refraîchissement précédemment effectué, il est nécessaire de se connecter en tant que root ou via un utilisateur appartenant au groupe `sudo` (ce qui n'est pas le cas lorsque l'on a une installation par défaut de Proxmox VE) via le Realm PAM. Une fois que l'on clique dur "Update" une fenêtre console du système apparaît et nous demande confirmation. C'est comme si nous faisions un `sudo apt upgrade` directement via la cli.
 
-![Upgrade](/static/images/upgrade.png)
+![Upgrade](/images/upgrade.png)
 
 Il est important de faire les opérations d'upate et d'upgrade régulièrement pour maintenir le système de Proxmox VE à jour. C'est tout aussi simple de passer directement via la cli `apt update && apt upgrade -y`. Il est possible d'envisager de créer un cron pour exécuter cette action régulièrement.
 
@@ -68,11 +68,11 @@ J'ai un serveur `NAS Synology` sur lequel j'ai ajouté un répertoire partagé s
 
 Pour que les sauvegardes fonctionnent, il faut à présent ajouter une politique de sauvegarde pour cela on se rend dans le menu "Backups" puis on clique sur "Add". Je choisi de mettre en place une programmation des sauvegardes tous les jours à minuit et d'appliquer la politique de sauvegarde sur l'unique VM que j'ai pour le moment. Tant que la création de VM n'est pas automatisée, il faudra penser à activer la sauvegarde pour chaque VM que l'on souhaite (celles du core). Concernant la rétention, je choisi de conserver les 5 dernières sauvegardes.
 
-![Backup configuration](/static/images/backup-configuration.png)
+![Backup configuration](/images/backup-configuration.png)
 
 Il est tout à fait possible de tester notre configuration en exécutant le job de sauvegarde maintenant grâce au bouton "Run now". Une fois fait, il faut se rendre au niveau du storage de sauvegarde pour observer le résultat.
 
-![Backup result](/static/images/backup-result.png)
+![Backup result](/images/backup-result.png)
 
 ## 2.4. Désactivation du message concernant l'absence de licence valide
 
@@ -106,6 +106,6 @@ Pour réaliser ces opérations, il faut cliquer sur la section `pve` (nom de mon
 
 Voici un exemple de configuration avec `vmbr1`
 
-![Configure int](/static/images/configure-int.png)
+![Configure int](/images/configure-int.png)
 
 Pour tester que cela fonctionne correctement, nous allons exécuter deux container alpine. Le premier container avec une interface réseau positionné sur `vmbr1` et le second sur `vmbr2`, puis nous allons installer le package `iputils-ping` pour disposer du ping et vérifier que nos container sont dans l'incapacité de communiquer entre eux.

@@ -74,13 +74,13 @@ Afin de facilité l'administration du homelab et l'utilisation des différents s
 
 # 3. Schéma réseau physique
 
-![Schéma physique](/static/images/schema_physique.png)
+![Schéma physique](/images/schema_physique.png)
 
 ---
 
 # 4. Schéma réseau logique
 
-![Schéma logique](/static/images/schema_logique.png)
+![Schéma logique](/images/schema_logique.png)
 
 ---
 

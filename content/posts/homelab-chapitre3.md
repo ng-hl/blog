@@ -1,7 +1,7 @@
 ---
 date: '2025-06-04T17:14:57+02:00'
 draft: false
-title: 'Homelab Chapitre3'
+title: 'Homelab - Chapitre3'
 summary: "Homelab - Chapitre 3 - Proxmox et réseau"
 tags: ["homelab"]
 categories: ["homelab"]
@@ -29,13 +29,13 @@ Ce que l'on souhaite, c'est l'association interfaces / réseau ci-dessous :
 | vmbr1     | CORE      | Réseau Core (homelab) | 192.168.100.254
 | vmbr2     | VMS     | Réseau VMS (homelab) | 192.168.200.254
 
-![Interfaces configuration](/static/images/interfaces-configuration.png)
+![Interfaces configuration](/images/interfaces-configuration.png)
 
 Il est important de désactiver les options `Block private networks and loopback addresses` et `Block bogon networks` car l'interface WAN se trouve sur un réseau local en 192.168.1.0/24.
 
 Afin de rendre l'interface webgui de pfSense accessible depuis le WAN, il est nécessaire d'ajouter une règle au niveau de cette interface.
 
-![Imageswebgui rule](/static/images/webgui-rule.png)
+![Imageswebgui rule](/images/webgui-rule.png)
 
 ---
 
