@@ -209,7 +209,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [x] Test d'utilisation
         - [ ] Stockage des éléments critiques
             - [ ] PKI
-            - [ ] Clés SSH
+            - [x] Clés SSH
             - [ ] Attribuer des mots de passes uniques (utilisateur ngobert et root et pfSense)
             - [ ] Intégration avec Gitlab CI
         - [x] Tests

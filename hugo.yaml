@@ -1,3 +1,34 @@
 languageCode: fr
-title: "Nicolas Gobert (DevOps)"
+title: "Nicolas Gobert"
 theme: ["PaperMod"]
+
+taxonomies:
+  category: categories
+  tag: tags
+
+pagination:
+  pagerSize: 10
+
+params:
+  defaultTheme: auto
+  ShowReadingTime: false
+  ShowShareButtons: false
+  ShowPostNavLinks: false
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+
+  homeInfoParams:
+    Title: "Bienvenue sur mon blog"
+    Content: >
+      Nicolas, passionné par l'univers GNU/Linux, l'open source, l'automatisation et le devOps. 
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/ng-hl"
+    - name: linkedin
+      url: "https://www.linkedin.com/in/nicolas-gobert-7a3728226/"
+
+  fuseOpts: 
+    isCaseSensitive: false
+    includeScore: true
+    shouldSort: true
