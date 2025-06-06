@@ -1,8 +1,8 @@
 ---
 date: '2025-06-04T10:39:09+02:00'
 draft: false
-title: 'Homelab - Chapitre 2'
-summary: "Homelab - Chapitre 2 - Proxmox et réseau"
+title: 'Chapitre 2 - Proxmox VE et réseau'
+summary: "Homelab - Chapitre 2 - Proxmox VE et réseau"
 tags: ["homelab"]
 categories: ["homelab"]
 ---

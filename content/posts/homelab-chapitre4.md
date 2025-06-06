@@ -1,7 +1,7 @@
 ---
 date: '2025-06-04T17:19:25+02:00'
 draft: false
-title: 'Homelab - Chapitre4'
+title: 'Chapitre 4 - Les templates (Debian 12 et Rocky Linux 9)'
 summary: "Homelab - Chapitre 4 - Les templates (Debian 12 et Rocky Linux 9)"
 tags: ["homelab"]
 categories: ["homelab"]

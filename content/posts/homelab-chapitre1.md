@@ -1,7 +1,7 @@
 ---
 date: '2025-05-07T21:32:53+02:00'
 draft: false
-title: 'Homelab - Chapitre 1'
+title: 'Chapitre 1 - Le design'
 summary: "Homelab - Chapitre 1 - Le design"
 tags: ["homelab"]
 categories: ["homelab"]

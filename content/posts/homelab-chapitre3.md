@@ -1,8 +1,8 @@
 ---
 date: '2025-06-04T17:14:57+02:00'
 draft: false
-title: 'Homelab - Chapitre3'
-summary: "Homelab - Chapitre 3 - Proxmox et réseau"
+title: 'Chapitre 3 - pfSense'
+summary: "Homelab - Chapitre 3 - pfSense"
 tags: ["homelab"]
 categories: ["homelab"]
 ---
