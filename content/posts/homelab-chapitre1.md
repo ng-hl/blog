@@ -54,7 +54,7 @@ Cette VM sera le point d'entrée vers les ressources du homelab. L'objectif est 
 
 Ce service va nous permettre de déployer les configurations des OS que nous déployons. Les actions serons initialisées manuellement dans un premier temps puis nous pourrons intégrer l'outil au sein d'une pipeline via Gitlab-CI plus tard. Le choix technique se portera sur la solution `Ansible`.
 
-## 2.5. Coffre fort numérique
+## 2.5. Coffre fort numérique
 
 Le coffre fort numérique va nous permettre de stocker divers mots de passe et secrets. Le choix technique se portera sur `VaultWarden`, solution alternative et open source à BitWarden.
 
@@ -172,6 +172,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [x] Intégration des hôtes déjà existant
             - [x] Installer le paquet python3
             - [x] Tester le bon fonctionnement des exécutions Ansible
+        - [ ] Gestion de l'adresse IP temporaire pour les nouvelles VM
         - [ ] Convertir les actions manuelles de configurations mineures avec Ansible
         - [ ] Tester le bon fonctionnement
     - [ ] Mise en place d'une PKI interne
