@@ -1,6 +1,6 @@
 ---
 date: '2025-06-06T22:54:23+02:00'
-draft: true
+draft: false
 title: 'Chapitre 5 - DNS'
 summary: "Homelab - Chapitre 5 - DNS"
 tags: ["homelab"]

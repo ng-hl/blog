@@ -1,6 +1,6 @@
 ---
 date: '2025-06-06T23:02:52+02:00'
-draft: true
+draft: false
 title: "Chapitre 6 - Machine d'administration"
 summary: "Homelab - Chapitre 6 - Machine d'administration"
 tags: ["homelab"]
