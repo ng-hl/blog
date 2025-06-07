@@ -1,6 +1,6 @@
 ---
 date: '2025-06-07T23:17:05+02:00'
-draft: true
+draft: false
 title: 'Chapitre 9 - ACME'
 summary: "Homelab - Chapitre 9 - ACME"
 tags: ["homelab"]
