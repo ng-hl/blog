@@ -2,7 +2,7 @@
 date: '2025-06-07T23:15:37+02:00'
 draft: false
 title: 'Chapitre 8 - Configuration de base avec Ansible'
-summary: "Homelab - Chapitre 7 - Configuration de base avec Ansible"
+summary: "Homelab - Chapitre 8 - Configuration de base avec Ansible"
 tags: ["homelab"]
 categories: ["homelab"]
 ---
