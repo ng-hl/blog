@@ -108,8 +108,8 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [x] Mise en place de la sauvegarde déportée
         - [x] Configuration des interfaces vmbr1 et vmbr2
         - [x] Tester le bon fonctionnement
-    - [x] Installation de PFSense
-        - [x] Importer l'ISO de PFSense
+    - [x] Installation de pfSense
+        - [x] Importer l'ISO de pfSense
         - [x] Configurer la VM avec trois interfaces (vmbr0, vmbr1 et vmbr2)
         - [x] Installer l'OS via l'ISO
         - [x] Rendre disponible l'interface d'administration depuis le WAN (réseau local)
@@ -173,21 +173,25 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
             - [x] Installer le paquet python3
             - [x] Tester le bon fonctionnement des exécutions Ansible
         - [ ] Gestion de l'adresse IP temporaire pour les nouvelles VM
-        - [ ] Convertir les actions manuelles de configurations mineures avec Ansible
+        - [ ] Convertir les actions manuelles de configurations mineures avec Ansible (intégrer les actions de la section Sécurisation -> Templates / VM, voir plus bas)
+        - [ ] Ajouter un linter
         - [ ] Tester le bon fonctionnement
-    - [ ] Mise en place d'une PKI interne
-        - [ ] Mise en place de l'OS via le template
-        - [ ] Configuration de l'OS via Ansible
-        - [ ] Génération de la structure de la PKI (répertoires et fichiers)
-        - [ ] Génération de la clé privée de la CA racine
-        - [ ] Génération du certificat de la CA racine
-        - [ ] Génération de la clé privée de la CA intermédiaire
-        - [ ] Génération du certificat de la CA intermédiaire
+    - [ ] Sécurisation
+        - [ ] pfSense
+            - [x] Activer le HTTPS
+            - [ ] Activer le renouvellement automatique du certificat TLS
+        - [ ] Tempaltes / VM
+            - [ ] Durcissement de SSH
+                - [ ] Désactivation de l'accés root en direct via SSH
+                - [ ] Accés par clé uniquement
+                - [ ] Mise en place de fail2ban
     - [ ] Mise en place de Gitlab
         - [ ] Mise en place de l'OS via les templates
         - [ ] Configuration de l'OS via Ansible
         - [ ] Installation de Gitlab CE
         - [ ] Configuration de base de Gitlab CE
+        - [ ] Configuration du HTTP avec le certificat *.ng-hl.com
+        - [ ] Configuration du renouvellement automatique du certificat
         - [ ] Création d'un compte administrateur nominatif
         - [ ] Création du groupe core
         - [ ] Création du projet core/ansible et versionné le code existant

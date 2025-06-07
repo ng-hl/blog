@@ -39,7 +39,19 @@ Afin de rendre l'interface webgui de pfSense accessible depuis le WAN, il est n�
 
 ---
 
-# 3. Règles
+# Application du HTTPS et renouvellement automatique du certificat
+
+> A partir du chapitre 9 concernant le certificat wildcard *.ng-hl.com et le service acme, nous passons le serveur pfSense accessible seulement via HTTPS et nous configurons le renouvellement automatique du certificat via acme
+
+Pour activé HTTPS sur pfSense, il suffit d'ajouter le contenu des éléments du certificat à savoir le fullchain et la clé privée associé au format .pem. dans la section "System" -> "Certificates".
+
+Concernant le renouvellement automatique, il faut tout d'abord activer l'accés en SSH sur notre pfSense. Pour cela, se rendre dans la section "System" -> "Advanced" -> "Admin Access" pour activer "Secure Shell Server" et préciser le public key only. De plus, il est nécessaire d'ouvrir le flux en provenance de `acme-core` sur l'adresse de pfSense de l'interface core `192.168.100.254` sur le port tcp/22.
+
+
+
+---
+
+# 3. Règles (WIP)
 
 | Date     | Description    | 
 |:-:    |:-:    |
