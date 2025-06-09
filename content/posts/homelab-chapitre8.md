@@ -31,8 +31,8 @@ Modification de la configuration réseau avec le fichier `/etc/network/interface
 - [ ] Configuration du hostname
 - [ ] Modification de /etc/hosts avec le bon hostname
 - [ ] Configuration du résolveur DNS
-- [ ] Installation des paquets de "base" (ajout)
-- [ ] Modification du motd (ajout)
+- [x] Installation des paquets de "base" (ajout)
+- [x] Modification du motd (ajout)
 
 Tout d'abord, nous créons l'architecture pour l'ensemble des roles que nous allons créer
 
@@ -106,3 +106,69 @@ Contenu du fichier `roles/network_config/tasks/main.yml`
     group: root
   notify: Restart du daemon networking
 ```
+
+---
+
+# 2. Environnement de développement et de test avec Molecule
+
+Nous commençons par intaller Docker en suivant cette [documentation](https://docs.docker.com/engine/install/debian/#install-using-the-repository) (installation via apt).
+
+Ensuite, on passe à l'installation de `molecule` ainsi que le plugin `docker` de molecule via `pipx`
+
+```bash
+pipx install molecule
+pipx inject molecule molecule-plugins[docker]
+```
+
+On se positionne au niveau du répertoire du role `base_packages` par exemple, `/opt/ansible/roles/base_packages, puis on initie notre scénario de test molecule
+
+```bash
+molecule init scenario -d docker
+```
+
+L'arborescence ci-dessous est ainsi créée
+
+```bash
+molecule/
+└── base_package
+    ├── converge.yml
+    └── molecule.yml
+```
+
+Voici le contenu de `converge.yml`
+
+```bash
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  roles:
+    - role: base_packages
+```
+
+Voici le contenu de `molecule.yml`
+
+```bash
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: debian:12
+    command: /sbin/init
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+```
+
+A présent, nous pouvons tester le bon fonctionnement de molecule avec la commande suivante `molecule test`. Cette commande permet de réaliser les actions suivantes :
+- Création du container avec l'image spécifiée
+- Préconfiguration
+- Converge (application du role)
+- Indempotence (vérification de la présence ou non des éléments du playbook sur le système cible)
+- Suppression du container
+
