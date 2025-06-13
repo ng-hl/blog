@@ -365,5 +365,90 @@ ansible-playbook -i envs/100-core/00_inventory.yml playbooks/00_config_vm.yml
 
 # 7. Gestion de l'IP temporaire
 
-> L'adresse IP `192.168.100.10` sur le sous-réseau `core` va être réservée pour la VM nouvellement. A chaque fois qu'une configuration va être poussée sur une nouvelle VM, la première étape va être de modifier
+> Pour le moment, l'action manuelle est privilégiée. Il est nécessaire de créer une VM à la main depuis Proxmox VE via le template `debian12-template` et de modifier la modification de la configuration IP. 
+
+---
+
+# 8. Environnement de développement et de test avec Molecule
+
+Nous commençons par intaller Docker en suivant cette [documentation](https://docs.docker.com/engine/install/debian/#install-using-the-repository) (installation via apt).
+
+Ensuite, on passe à l'installation de `molecule` ainsi que le plugin `docker` de molecule via `pipx`
+
+```bash
+pipx install molecule
+pipx inject molecule molecule-plugins[docker] ansible
+pipx run --spec molecule ansible-galaxy collection install community.docker
+```
+
+On se positionne au niveau du répertoire du role `base_packages` par exemple, `/opt/ansible/roles/base_packages, puis on initie notre scénario de test molecule
+
+```bash
+molecule init scenario -d docker
+```
+
+L'arborescence ci-dessous est ainsi créée
+
+```bash
+molecule/
+└── base_package
+    ├── converge.yml
+    └── molecule.yml
+```
+
+Voici le contenu de `converge.yml`
+
+```bash
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  roles:
+    - role: base_packages
+```
+
+Voici le contenu de `molecule.yml`
+
+```bash
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: debian:12
+    command: /bin/bash -c "sleep infinity"
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_CONFIG: /opt/ansible/ansible.cfg
+  options:
+    become: true
+    become_method: su
+verifier:
+  name: ansible
+```
+
+Enfin, il nous reste à modifié le fichier `meta/main.yml`
+
+```bash
+#SPDX-License-Identifier: MIT-0
+galaxy_info:
+  author: ngobert
+  role_name: base_package
+  namespace: nghl
+  description: Rôle pour installer les paquets de base 
+  license: MIT
+  min_ansible_version: 2.1
+```
+
+A présent, nous pouvons tester le bon fonctionnement de molecule avec la commande suivante `molecule test`. Cette commande permet de réaliser les actions suivantes :
+- Création du container avec l'image spécifiée
+- Préconfiguration
+- Converge (application du role)
+- Indempotence (vérification de la présence ou non des éléments du playbook sur le système cible)
+- Suppression du container
+
 

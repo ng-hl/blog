@@ -75,9 +75,15 @@ sudo vim /etc/network/interfaces
 [...]
 auto eth0
 iface eth0 inet static
-    address 192.168.30.1/24 # Pour Debian12 et .2 pour RockyLinux9
-    gateway 192.168.30.254
+    address 192.168.100.10/24 # Pour Debian12
+    gateway 192.168.100.254
 
 # Rocky9
 nmtui
+```
+
+Enfin, nous offrons la possibilité à l'utilisateur `ansible` d'exécuter toutes les commandes avec `sudo` sans demande de saisie du mot de passe. Pour cela, nous créons le fichier `/etc/sudoers.d/ansible` avec la ligne suivante
+
+```bash
+ansible ALL=(ALL) NOPASSWD: ALL
 ```

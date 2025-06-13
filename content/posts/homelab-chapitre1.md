@@ -239,3 +239,5 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 | ansible-core.homelab | 192.168.100.250 | Debian 12.10 |
 | acme-core.homelab | 192.168.100.248 | Debian 12.10 |
 | vaultwarden-core.homelab   | 192.168.100.249 | Debian 12.10 | vaultwarden-core.ng-hl.com vaultwarden.ng-hl.com (CNAME) |
+| ansibledev-core.homelab | 192.168.100.11 | Debian12.10 |
+| debian12-template-core.homelab | 192.168.100.10 | Debian12.10 |  
