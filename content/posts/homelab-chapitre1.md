@@ -180,11 +180,12 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [ ] pfSense
             - [x] Activer le HTTPS
             - [ ] Activer le renouvellement automatique du certificat TLS
-        - [ ] Tempaltes / VM
+        - [ ] Templates / VM
             - [ ] Durcissement de SSH
                 - [ ] Désactivation de l'accés root en direct via SSH
                 - [ ] Accés par clé uniquement
                 - [ ] Mise en place de fail2ban
+            - [ ] Mise en place de nftables
     - [ ] Mise en place de Gitlab
         - [ ] Mise en place de l'OS via les templates
         - [ ] Configuration de l'OS via Ansible
@@ -239,5 +240,6 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 | ansible-core.homelab | 192.168.100.250 | Debian 12.10 |
 | acme-core.homelab | 192.168.100.248 | Debian 12.10 |
 | vaultwarden-core.homelab   | 192.168.100.249 | Debian 12.10 | vaultwarden-core.ng-hl.com vaultwarden.ng-hl.com (CNAME) |
+| gitlab-core.homelab | 192.168.100.247 | Debian 12.10 | 
 | ansibledev-core.homelab | 192.168.100.11 | Debian12.10 |
 | debian12-template-core.homelab | 192.168.100.10 | Debian12.10 |  
