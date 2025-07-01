@@ -123,7 +123,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
             - [x] Authentification : Intégrer la clé SSH publique de l'utilisateur de la machine de gestion centralisée
             - [x] Utilisateur : Création de l'utilisateur ansible (group sudo)
             - [x] Authentification : Intégrer la clé SSH publique de l'utilisateur ansible
-            - [x] Réseau : Configuration statique 192.168.30.1/24
+            - [x] Réseau : Configuration statique 192.168.100.11/24
         - [x] Tester le bon fonctionnement avec le déploiement d'une VM de test
         - [x] Convertir en tant que template
     - [x] Créer un template de RockyLinux 9
@@ -136,7 +136,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
             - [x] Authentification : Intégrer la clé SSH publique de l'utilisateur de la machine de gestion centralisée
             - [x] Utilisateur : Création de l'utilisateur ansible
             - [x] Authentification : Intégrer la clé SSH publique de l'utilisateur ansible
-            - [x] Réseau : Configuration statique 192.168.30.2/24
+            - [x] Réseau : Configuration statique 192.168.100.12/24
         - [x] Tester le bon fonctionnement avec le déploiement d'une VM de test
         - [x] Convertir en tant que template
     - [x] Installation du DNS (Bind9)
@@ -172,7 +172,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [x] Intégration des hôtes déjà existant
             - [x] Installer le paquet python3
             - [x] Tester le bon fonctionnement des exécutions Ansible
-        - [ ] Gestion de l'adresse IP temporaire pour les nouvelles VM
+        - [x] Gestion de l'adresse IP temporaire pour les nouvelles VM
         - [ ] Convertir les actions manuelles de configurations mineures avec Ansible (intégrer les actions de la section Sécurisation -> Templates / VM, voir plus bas)
         - [ ] Ajouter un linter
         - [ ] Tester le bon fonctionnement
@@ -181,10 +181,10 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
             - [x] Activer le HTTPS
             - [ ] Activer le renouvellement automatique du certificat TLS
         - [ ] Templates / VM
-            - [ ] Durcissement de SSH
-                - [ ] Désactivation de l'accés root en direct via SSH
-                - [ ] Accés par clé uniquement
-                - [ ] Mise en place de fail2ban
+            - [x] Durcissement de SSH
+                - [x] Désactivation de l'accés root en direct via SSH
+                - [x] Accés par clé uniquement
+                - [x] Mise en place de fail2ban
             - [ ] Mise en place de nftables
     - [ ] Mise en place de Gitlab
         - [x] Mise en place de l'OS via les templates
@@ -192,11 +192,12 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [x] Installation de Gitlab CE
         - [x] Configuration de base de Gitlab CE
         - [x] Configuration du HTTPS avec le certificat *.ng-hl.com
-        - [ ] Configuration du renouvellement automatique du certificat
+        - [x] Configuration du renouvellement automatique du certificat
+        - [ ] Tester le renouvellement du certificat (forcer) 
         - [x] Création d'un compte administrateur nominatif
-        - [ ] Création du groupe core
-        - [ ] Création du projet core/ansible et versionné le code existant
-        - [ ] Création du projet core/deploy
+        - [x] Création du groupe core
+        - [x] Création du projet core/ansible et versionné le code existant
+        - [x] Création du projet core/deploy
     - [ ] Terraform
         - [ ] Créer le projet core/terraform
         - [ ] Intégration du provider Proxmox
@@ -204,8 +205,8 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [ ] Suppression d'une VM
         - [ ] Récupérer les informations pour avoir un inventaire dynamique
     - [ ] Nom de domaine
-        - [ ] Réserver un nom de domaine (CloudFlare, Duck DNS, ...)
-        - [ ] Générer le certificat wildcard *.ng-hl.com avec acme.sh
+        - [x] Réserver un nom de domaine (CloudFlare, Duck DNS, ...)
+        - [x] Générer le certificat wildcard *.ng-hl.com avec acme.sh
         - [ ] Gérer le renouvellement automatique avec acme.sh
     - [ ] Append : Coffre fort (Vaultwarden)
         - [x] Mise en place de l'OS via les templates
@@ -237,7 +238,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 
 ## 6.4. Projets annexes
 
-- [ ] Agents IA
+- [ ] Projet - Agents IA
     - [ ] Equipe de développement d'agents IA
         - [ ] Serveur crewai-vms
             - [ ] Création du serveur

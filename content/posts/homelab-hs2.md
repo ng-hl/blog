@@ -20,8 +20,6 @@ Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. 
 |:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
 | Debian 12.10     | crewai-vms      | 192.168.200.5    | vmbr2 (vms)    | 1     | 2024   | 20Gio
 
-Il faut également penser à activer la sauvegarde automatique de la VM sur Proxmox en l'ajoutant au niveau de la politique de sauvegarde précédemment créée.
-
 ---
 
 # 2. Configuration de l'OS via Ansible
@@ -36,12 +34,6 @@ crewai-vms.homelab:
     hostname: crewai-vms
 ```
 
-Il est nécessaire d'ajouter les droits sudo sur l'utilisateur `ansible` au niveau du fichier `/etc/sudoers.d/ansible` avec les éléments ci-dessous. Il s'agit d'un oubli au niveau du template. (A corriger plus tard).
-
-```bash
-ansible ALL=(ALL) NOPASSWD: ALL
-```
-
 Pour exécuter le playbook, il faut lancer la commande suivante
 
 ```bash
@@ -49,3 +41,28 @@ ansible-playbook -i envs/200-core/00_inventory.yml -l 'crewai-vms.homelab,' play
 ```
 
 Voici le récapitulatif
+
+```bash
+mardi 01 juillet 2025  23:05:15 +0200 (0:00:00.260)       0:00:24.587 ********* 
+=============================================================================== 
+dns_config : Installation du paquet systemd-resolved --------------------------------------------------------------------- 15.34s
+base_packages : Installation des paquets de base -------------------------------------------------------------------------- 3.28s
+Gathering Facts ----------------------------------------------------------------------------------------------------------- 1.05s
+dns_config : Autoremove et purge ------------------------------------------------------------------------------------------ 0.58s
+motd : Déploiement du motd ------------------------------------------------------------------------------------------------ 0.46s
+hostname_config : Modification du hostname -------------------------------------------------------------------------------- 0.45s
+base_packages : Mise à jour du cache apt ---------------------------------------------------------------------------------- 0.40s
+dns_config : Enable du daemon systemd-resolved ---------------------------------------------------------------------------- 0.39s
+dns_config : Suppression du paquet resolvconf ----------------------------------------------------------------------------- 0.33s
+dns_config : Resart du daemon systemd-resolved ---------------------------------------------------------------------------- 0.30s
+security_ssh : Restart du daemon sshd ------------------------------------------------------------------------------------- 0.26s
+dns_config : Suppression du fichier /etc/resolv.conf ---------------------------------------------------------------------- 0.20s
+ipv6_disable : Désactivation de la prise en charge de l'IPv6 globalement -------------------------------------------------- 0.20s
+hostname_config : Modification du fichier /etc/hosts ---------------------------------------------------------------------- 0.19s
+dns_config : Configuration du DNS dans /etc/resolved.conf ----------------------------------------------------------------- 0.19s
+ipv6_disable : Désactivation de la prise en charge de l'IPv6 par défaut --------------------------------------------------- 0.14s
+security_ssh : Activation de l'authentification par clé ------------------------------------------------------------------- 0.14s
+dns_config : Création du nouveau lien symbolique vers /etc/resolv.conf ---------------------------------------------------- 0.14s
+security_ssh : Désactivaction de l'authentification par mot de passe ------------------------------------------------------ 0.14s
+dns_config : Configuration du domaine dans /etc/resolved.conf ------------------------------------------------------------- 0.14s
+```

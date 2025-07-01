@@ -102,3 +102,19 @@ Enfin, pour que notre certificat wildcard *.ng-hl.com puisse porter le HTTPS, on
 sudo gitlab-ctl reconfigure
 sudo gitlab-ctl restart
 ```
+
+---
+
+# 4. Renouvellement automatique du certificat
+
+On utilise les éléments mis en place lors du chapitre 9 pour gérer le renouvellement des certificats TLS via acme depuis le serveur `acme-core.homelab`. Il est nécessaire d'autoriser la clé `id_acme.pud` pour se connecter en tant que root sur le serveur `gitlab-core.homelab`. Je choisi ici d'utiliser l'utilisateur root et non pas ngobert pour éviter d'ouvrir des droits sudo pour exécuter les commandes `gitlab-ctl reconfigure` et `gitlab-ctl restart`. Enfin, il faut que l'on ajoute les éléments suivant dans le fichier `/root/acme-deploy/targets.yml`
+
+```bash
+- host: gitlab-core.homelab
+    user: root
+    type: binary
+    cert_path: /etc/gitlab/ssl/
+    privkey_name: gitlab.ng-hl.com.key
+    cert_name: gitlab.ng-hl.com.crt
+    reload_cmd: gitlab-ctl reconfigure && gitlab-ctl restart
+```

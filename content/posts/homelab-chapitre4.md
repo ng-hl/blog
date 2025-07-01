@@ -87,3 +87,57 @@ Enfin, nous offrons la possibilité à l'utilisateur `ansible` d'exécuter toute
 ```bash
 ansible ALL=(ALL) NOPASSWD: ALL
 ```
+
+Nous modifions la configuration du daemon sshd pour améliorer la sécurité en autorisant uniquement la connexion ssh avec les utilisateurs `ngobert` et `root` avec une clé, on écoute uniquement sur l'interface choisie, etc.
+
+Voici le contenu du fichier `/etc/ssh/sshd_config`
+
+```bash
+Include /etc/ssh/sshd_config.d/*.conf
+
+Port 22
+ListenAddress 192.168.100.10
+LogLevel INFO
+PermitRootLogin prohibit-password
+PubkeyAuthentication yes
+PasswordAuthentication no
+PermitEmptyPasswords no
+KbdInteractiveAuthentication no
+UsePAM yes
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+X11Forwarding yes
+PrintMotd no
+PrintlastLog no
+PermitTunnel no
+AcceptEnv LANG LC_*
+Subsystem       sftp    /usr/lib/openssh/sftp-server
+AllowUsers ngobert root ansible
+```
+
+Toujours dans l'optique d'améliorer la sécurité, nous installons et configurons la solution `fail2ban` pour SSH
+
+```bash
+sudo apt install -y fail2ban
+```
+
+Nous créons le fichier `/etc/fail2ban/jail.d/ssh.conf` avec les éléments suivants
+
+```bash
+[sshd]
+enabled = true
+port    = ssh
+filter  = sshd
+logpath = /var/log/auth.log
+bantime = 3600
+findtime = 600
+maxretry = 5
+backend = systemd
+```
+
+Nous activons le daemon au démarrage du système et on l'exécute maintenant
+
+```bash
+sudo systemctl enable fail2ban
+sudo systemctl restart fail2ban
+```
