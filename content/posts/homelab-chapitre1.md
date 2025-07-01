@@ -187,13 +187,13 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
                 - [ ] Mise en place de fail2ban
             - [ ] Mise en place de nftables
     - [ ] Mise en place de Gitlab
-        - [ ] Mise en place de l'OS via les templates
-        - [ ] Configuration de l'OS via Ansible
-        - [ ] Installation de Gitlab CE
-        - [ ] Configuration de base de Gitlab CE
-        - [ ] Configuration du HTTP avec le certificat *.ng-hl.com
+        - [x] Mise en place de l'OS via les templates
+        - [x] Configuration de l'OS via Ansible
+        - [x] Installation de Gitlab CE
+        - [x] Configuration de base de Gitlab CE
+        - [x] Configuration du HTTPS avec le certificat *.ng-hl.com
         - [ ] Configuration du renouvellement automatique du certificat
-        - [ ] Création d'un compte administrateur nominatif
+        - [x] Création d'un compte administrateur nominatif
         - [ ] Création du groupe core
         - [ ] Création du projet core/ansible et versionné le code existant
         - [ ] Création du projet core/deploy
@@ -226,7 +226,28 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
             - [x] Configuration de acme + test de renouvellement forcé
             - [x] Script de déploiement du nouveau certificat (indexé sur la liste des services exposés)
             - [x] Test de bout en bout
-    
+
+---
+
+## 6.3. 🐳
+
+(WIP)
+
+---
+
+## 6.4. Projets annexes
+
+- [ ] Agents IA
+    - [ ] Equipe de développement d'agents IA
+        - [ ] Serveur crewai-vms
+            - [ ] Création du serveur
+            - [ ] Configuration via Ansible
+            - [ ] Installation de crewai via python uv
+            - [ ] Configuration de crewai
+        - [ ] Création du dépôt dev-ia sur Gitlab
+        - [ ] Provisionnement sur ChatGPT
+        - [ ] Configuration des prompts (1 chef d'équipe, 1 développeur, 1 testeur, 1 rédacteur de documentation)
+
 ---
 
 # 7. Inventaire

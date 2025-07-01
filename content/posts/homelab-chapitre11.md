@@ -17,7 +17,7 @@ Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. 
 
 | OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
 |:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
-| Debian 12.10     | gitlab-core      | 192.168.100.247    | vmbr1 (core)    | 1     | 2048   | 20Gio
+| Debian 12.10     | gitlab-core      | 192.168.100.247    | vmbr1 (core)    | 2     | 4096   | 20Gio
 
 Il faut également penser à activer la sauvegarde automatique de la VM sur Proxmox en l'ajoutant au niveau de la politique de sauvegarde précédemment créée.
 
@@ -92,4 +92,13 @@ curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.de
 
 ```bash
 sudo EXTERNAL_URL="https://gitlab.ng-hl.com" apt-get install gitlab-ce
+```
+
+On peut se connecter sur l'interface en HTTPS (avec un certificat auto-signé pour le moment) en tant que `root`. La première chose à faire est de créer un autre utilisateur que l'on va appeler `ngobert` avec les droits administrateur puis on désactive la fonctionnalité qui permet la création de nouveau compte depuis l'interface de connexion.
+
+Enfin, pour que notre certificat wildcard *.ng-hl.com puisse porter le HTTPS, on récupère les fichiers de certificat et la clé privée pour les positionner au niveau du répertoire `/etc/gitlab/ssl` sur le serveur `gitlab-core.homelab` avec respectivement les noms `gitlab.ng-hl.com.crt` et `gitlab.ng-hl.com.key` puis on recharge gitlab avec les commandes ci-dessous.
+
+```bash
+sudo gitlab-ctl reconfigure
+sudo gitlab-ctl restart
 ```
