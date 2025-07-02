@@ -92,7 +92,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 |---    |:-:    |:-:    |:-:    |
 | 🐟    | Le homelab est fonctionnel, il est possible de déployer des VMs préconfigurées à la main via des templates.      | Firewall, DNS, machine d'administration     | Template de VM sur Proxmox
 | 🐬     | Le déploiement des VM est uniforme et automatisé. La machine de rebond centralisée peut communiquer avec l'entièreté des machines. Une PKI est en place ainsi que le nom de domaine ng-hl.com et une acme    | Gitlab-ce, Terraform, Ansible, PKI, certificat wildcard, acme     | Template de VM sur Proxmox avec Terraform et Ansible dans une pipeline Gitlab CI/CD 
-| 🐳    | La stack d'observabilité est en place et le homepage prêt à l'emploi avec une évolution dynamique.     | Prometheus, Grafana, Homepage, notifications (Discord ?)       | Image préconfigurée sur Proxmox avec Terraform et Ansible dans une pipeline Gitlab CI/CD
+| 🐳    | La stack d'observabilité est en place et le dashboard Homepage prêt à l'emploi avec une évolution dynamique.     | Prometheus, Grafana, Homepage, notifications (Discord ?)       | Image préconfigurée sur Proxmox avec Terraform et Ansible dans une pipeline Gitlab CI/CD
 
 ---
 
@@ -104,7 +104,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
     - [x] Installation de Proxmox VE
     - [x] Configuration de Proxmox VE
         - [x] Création de l'utilisateur d'administration
-        - [x] Mise en place des bons dépôts pour l'update
+        - [x] Mise en place des bons dépôts pour les mises à jour
         - [x] Mise en place de la sauvegarde déportée
         - [x] Configuration des interfaces vmbr1 et vmbr2
         - [x] Tester le bon fonctionnement
@@ -117,11 +117,11 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [x] Importer l'ISO de Debian 12
         - [x] Installer l'OS avec les éléments suivants
             - [x] Nom : debian12-template.homelab
-            - [x] Disque : LVM partionnement manuel
+            - [x] Disque : LVM partitionnement manuel
             - [x] Service : openssh-server
             - [x] Utilisateur : Création de l'utilisateur d'administration
             - [x] Authentification : Intégrer la clé SSH publique de l'utilisateur de la machine de gestion centralisée
-            - [x] Utilisateur : Création de l'utilisateur ansible (group sudo)
+            - [x] Utilisateur : Création de l'utilisateur ansible (groupe sudo)
             - [x] Authentification : Intégrer la clé SSH publique de l'utilisateur ansible
             - [x] Réseau : Configuration statique 192.168.100.11/24
         - [x] Tester le bon fonctionnement avec le déploiement d'une VM de test
@@ -130,7 +130,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [x] Importer l'ISO de RockyLinux 9
         - [x] Installer l'OS avec les éléments suivants
             - [x] Nom : rocky9-template.homelab
-            - [x] Disque : LVM partionnement manuel
+            - [x] Disque : LVM partitionnement manuel
             - [x] Service : openssh-server
             - [x] Utilisateur : Création de l'utilisateur d'administration
             - [x] Authentification : Intégrer la clé SSH publique de l'utilisateur de la machine de gestion centralisée
@@ -142,7 +142,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
     - [x] Installation du DNS (Bind9)
         - [x] Mise en place de l'OS via les templates
         - [x] Activer la sauvegarde depuis Proxmox
-        - [x] Modifications mineures de l'OS (changement hostname, configuration réseau)
+        - [x] Modifications mineures de l'OS (changement du hostname, configuration réseau)
         - [x] Installation de bind9
         - [x] Configuration de la zone DNS et du forwarder
         - [x] Configuration de la zone DNS inverse
@@ -150,12 +150,12 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
     - [x] Création de la machine d'administration centrale `admin-core`
         - [x] Mise en place de l'OS via les templates
         - [x] Activer la sauvegarde depuis Proxmox
-        - [x] Modifications mineures de l'OS (changement hostname, configuration réseau)
+        - [x] Modifications mineures de l'OS (changement du hostname, configuration réseau)
         - [x] Modification de la configuration du résolveur DNS pour admin-core
         - [x] Test de la résolution interne depuis admin-core
         - [x] Test de la résolution externe depuis admin-core
         - [x] Importer les clés privées SSH utilisées au sein du homelab
-        - [x] Modification du FW (accés SSH depuis le WAN uniquement sur cette VM)
+        - [x] Modification du FW (accès SSH depuis le WAN uniquement sur cette VM)
 
 ---
 
@@ -165,11 +165,11 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
     - [ ] Mise en place de Ansible
         - [x] Mise en place de l'OS via les templates
         - [x] Activer la sauvegarde depuis Proxmox
-        - [x] Modifications mineures de l'OS (changement hostname, configuration réseau)
+        - [x] Modifications mineures de l'OS (changement du hostname, configuration réseau)
         - [x] Intégration sur admin-core (alias ssh)
         - [x] Installation de Ansible (via pipx)
         - [x] Configuration de Ansible
-        - [x] Intégration des hôtes déjà existant
+        - [x] Intégration des hôtes déjà existants
             - [x] Installer le paquet python3
             - [x] Tester le bon fonctionnement des exécutions Ansible
         - [x] Gestion de l'adresse IP temporaire pour les nouvelles VM
@@ -182,8 +182,8 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
             - [ ] Activer le renouvellement automatique du certificat TLS
         - [ ] Templates / VM
             - [x] Durcissement de SSH
-                - [x] Désactivation de l'accés root en direct via SSH
-                - [x] Accés par clé uniquement
+                - [x] Désactivation de l'accès root en direct via SSH
+                - [x] Accès par clé uniquement
                 - [x] Mise en place de fail2ban
             - [ ] Mise en place de nftables
     - [ ] Mise en place de Gitlab
@@ -196,7 +196,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [ ] Tester le renouvellement du certificat (forcer) 
         - [x] Création d'un compte administrateur nominatif
         - [x] Création du groupe core
-        - [x] Création du projet core/ansible et versionné le code existant
+        - [ ] Création du projet core/ansible et versionner le code existant
         - [x] Création du projet core/deploy
     - [ ] Terraform
         - [ ] Créer le projet core/terraform
@@ -217,12 +217,12 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [ ] Stockage des éléments critiques
             - [ ] PKI
             - [x] Clés SSH
-            - [ ] Attribuer des mots de passes uniques (utilisateur ngobert et root et pfSense)
+            - [ ] Attribuer des mots de passe uniques (utilisateur ngobert, root et pfSense)
             - [ ] Intégration avec Gitlab CI
         - [x] Tests
     - [x] Certificat wildcard *.ng-hl.com
         - [x] Réservation du nom de domaine
-        - [x] Création du certification
+        - [x] Création du certificat
         - [x] Automatisation du renouvellement du certificat
             - [x] Configuration de acme + test de renouvellement forcé
             - [x] Script de déploiement du nouveau certificat (indexé sur la liste des services exposés)
@@ -239,8 +239,8 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 ## 6.4. Projets annexes
 
 - [ ] Projet - Agents IA
-    - [ ] Equipe de développement d'agents IA
-        - [ ] Serveur crewai-vms
+    - [ ] Équipe de développement d'agents IA
+        - [ ] Serveur crewai-vms
             - [ ] Création du serveur
             - [ ] Configuration via Ansible
             - [ ] Installation de crewai via python uv
@@ -263,5 +263,5 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 | acme-core.homelab | 192.168.100.248 | Debian 12.10 |
 | vaultwarden-core.homelab   | 192.168.100.249 | Debian 12.10 | vaultwarden-core.ng-hl.com vaultwarden.ng-hl.com (CNAME) |
 | gitlab-core.homelab | 192.168.100.247 | Debian 12.10 | 
-| ansibledev-core.homelab | 192.168.100.11 | Debian12.10 |
-| debian12-template-core.homelab | 192.168.100.10 | Debian12.10 |  
+| ansibledev-core.homelab | 192.168.100.11 | Debian 12.10 |
+| debian12-template-core.homelab | 192.168.100.10 | Debian 12.10 |
