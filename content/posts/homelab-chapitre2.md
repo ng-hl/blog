@@ -15,17 +15,17 @@ categories: ["homelab"]
 
 Proxmox VE (Virtual Environment) est un hyperviseur de type 1 et open source. Cette solution offre de nombreuses fonctionnalités en parfaite cohérence avec les besoins du homelab. Voici un tableau récapitulatif non exhaustif de ces dernières :
 
-| Fonctionnalités      | Description      |
+| Fonctionnalité      | Description      |
 |:-:    |---    |
 | Prise en charge complète de la virtualisation avec KVM     | Support de la virtualisation de machines QEMU/KVM     |
 | Prise en charge des conteneurs LXC     | Conteneurisation légère et native sous Linux    |
 | Interface web     | Interface web qui permet d'interragir avec les éléments de gestion liés à Proxmox VE ainsi que les VM et les containers     |
 | Cluster     | Gestion centralisée du cluster dans le cas où plusieurs nodes sont présents    |
 | HA     | Possibilité de configurer des bascules automatiques pour assurer la continuité de service     |
-| Snapshots et sauvegarde     | Gestion des snapshots et des sauvegardes    |
-| API REST    | Automatisation avec l'intégration de l'API REST    |
+| Snapshots et sauvegardes     | Gestion des snapshots et des sauvegardes    |
+| API REST    | Automatisation via l'intégration de l'API REST    |
 
-J'ai récupéré une image ISO sur le [site officiel de Proxmox](https://www.proxmox.com/en/) et j'ai rendu une clé USB bootable avec l'image récupérée. Je ne vais pas détailler l'installation de Proxmox VE ici, de nombreux guides existent et le programme d'installation fournit par Proxmox est clair et efficace.
+J'ai récupéré une image ISO sur le [site officiel de Proxmox](https://www.proxmox.com/en/) et j'ai rendu une clé USB bootable avec l'image récupérée. Je ne vais pas détailler l'installation de Proxmox VE ici, de nombreux guides existent et le programme d'installation fourni par Proxmox est clair et efficace.
 
 ---
 
@@ -50,7 +50,7 @@ Voici la configuration que j'obtiens après ces manipulations. A noter, que j'ai
 
 ![Repos configuration 2](/images/repos-configuration-2.png)
 
-A présent, il ne reste plus qu'à rafraîchir le contenu du cache du gestionnaire de package côté système de Proxmox VE en cliquant sur "Updates" puis "Refresh".
+Il ne reste plus qu'à rafraîchir le cache du gestionnaire de paquets côté système Proxmox VE en cliquant sur "Updates" puis "Refresh".
 
 ![Update](/images/update.png)
 

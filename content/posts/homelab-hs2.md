@@ -66,3 +66,96 @@ dns_config : Création du nouveau lien symbolique vers /etc/resolv.conf --------
 security_ssh : Désactivaction de l'authentification par mot de passe ------------------------------------------------------ 0.14s
 dns_config : Configuration du domaine dans /etc/resolved.conf ------------------------------------------------------------- 0.14s
 ```
+
+---
+
+# 3. Installation de crewAI
+
+> Pour installer crewAI, il est nécessaire que le paquet `python3` soit installé sur le serveur. On peut vérifier avec cette commande `python3 --version`. Si aucune version de Python n'est détecté, il faut l'installer avec la commande suivante `sudo apt install -y python3`.
+
+> Pour créer l'environnement Python isolé spécifique à crewAI, nous utilisons python UV (outils en Rust). Cette solution permet d'isoler proprement l'environnement virtuel et d'avoir des performances accrues concernant l'utilisation de pip (uv pip) et d'autres fonctionnalités de gestion trés intéressantes.
+
+Nous installons `uv`
+
+```bash
+curl -Ls https://astral.sh/uv/install.sh | sh
+```
+
+Nous vérifions que `uv` est bien disponible sur le système
+
+```bash
+uv --version
+```
+
+Nous créons le répertoire qui va contenir la solution `crewai`
+
+```bash
+sudo mkdir /opt/crewai-project && sudo chown ngobert:ngobert /opt/crewai-project
+```
+
+Nous créons l'envrionnement virtuel géré par `uv` puis on se positionne à l'intérieur pour réaliser les opérations suivantes
+
+```bash
+# Création
+uv venv
+
+# Positionnement
+source .venv/bin/activate
+```
+
+Nous lançons l'installation de `crewai` et des éléments annexes nécessaires.
+
+```bash
+uv pip install crewai langchain langchain-community openai python-dotenv
+```
+
+Enfin, nous pouvons vérifier que l'installation de `crewai`est fonctionnelle
+
+```bash
+crewai --version
+```
+
+# 4. Création du projet poc
+
+Le projet que nous allons créer s'appel `poc`. L'outil `crewai` fournit une commande pour générer l'arborescence d'un projet.
+
+```bash
+crewai create crew poc
+```
+
+Pendant la création, nous sélectionnons le provider `openai`. Enfin, il est nécessaire de disposer d'un token pour interragir avec l'API d'openai. Pour cela, il faut se rendre sur ce [site](https://platform.openai.com) afin d'en générer un.
+
+Voici le rendu que l'on doit avoir après avoir remplit toutes les informations demandées
+
+```bash
+API keys and model saved to .env file
+Selected model: gpt-4
+  - Created poc/.gitignore
+  - Created poc/pyproject.toml
+  - Created poc/README.md
+  - Created poc/knowledge/user_preference.txt
+  - Created poc/src/poc/__init__.py
+  - Created poc/src/poc/main.py
+  - Created poc/src/poc/crew.py
+  - Created poc/src/poc/tools/custom_tool.py
+  - Created poc/src/poc/tools/__init__.py
+  - Created poc/src/poc/config/agents.yaml
+  - Created poc/src/poc/config/tasks.yaml
+Crew poc created successfully!
+```
+
+Le projet `poc` porte sur la création d'une équipe de développeur ayant pour objectif la réalisation d'une application web simple. Une page affiche un formulaire avec 4 cases à cocher (oui ou non) qui répondent à des questions :
+- Heures de sommeil + 7h
+- Prise des compléments alimentaires
+- Entraînement
+- + 10 000 pas
+Ces informations sont ensuite stockées dans une base de données afin de conserver les éléments. Il est possible de répondre aux questions une seule fois par jour et un dashboard permet de voir les résultats quotidient. Tout les éléments seront packagés dans un docker-compose.yml et exécuté avec `docker compose`.
+L'équipe de développement sera composée des agents suivants :
+- Chef de projet, il définit les étapes du projet, supervise et coordonne l'équipe
+- Développeur, il implémente le code (Python Flask)
+- Rédacteur, il crée la documentation technique de la solution et la documentation utilisateur
+
+Voici un schéma de la solution et de l'équipe
+
+![Schéma poc crewAI](/images/schema_poc_crewai.png)
+
