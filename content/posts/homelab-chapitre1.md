@@ -262,6 +262,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 | ansible-core.homelab | 192.168.100.250 | Debian 12.10 |
 | acme-core.homelab | 192.168.100.248 | Debian 12.10 |
 | vaultwarden-core.homelab   | 192.168.100.249 | Debian 12.10 | vaultwarden-core.ng-hl.com vaultwarden.ng-hl.com (CNAME) |
-| gitlab-core.homelab | 192.168.100.247 | Debian 12.10 | 
+| gitlab-core.homelab | 192.168.100.247 | Debian 12.10 | gitlab-core.ng-hl.com gitlab.ng-hl.com (CNAME)
+| terraform-core.homelab | 192.168.100.246 | Debian 12.10 |
 | ansibledev-core.homelab | 192.168.100.11 | Debian 12.10 |
 | debian12-template-core.homelab | 192.168.100.10 | Debian 12.10 |
