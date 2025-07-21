@@ -3,7 +3,7 @@ date: '2025-07-21T21:16:44+02:00'
 draft: false
 title: 'FEX - LVM'
 summary: "FEX - LVM"
-tags: ["fex","lvm"]
+tags: ["fex","linux"]
 categories: ["fex"]
 ---
 
