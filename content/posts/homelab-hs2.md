@@ -5,7 +5,6 @@ title: 'Hors Série 2 - Agents IA'
 summary: "Homelab - Hors Série 2 - Agents IA"
 tags: ["homelab"]
 categories: ["homelab"]
-
 ---
 
 > Ce document contient les livrables issus de la mise en place du service des agents IA via la solution `crewAI`. L'objectif est de réaliser un PoC concernant l'interraction d'IA via la création d'une équipe de développement dont la finalité et de créer une application web simple.

@@ -5,7 +5,6 @@ title: 'Hors Série 1 - Kresus'
 summary: "Homelab - Hors Série 1 - Kresus"
 tags: ["homelab"]
 categories: ["homelab"]
-
 ---
 
 > Ce document contient les livrables issus de la mise en place du service `kresus`, une solution de gestion des comptes bancaires.

@@ -320,7 +320,7 @@ touch /var/log/acme-deploy.sh
 On force le renouvellement du certificat
 
 ```bash
-acme.sh --renew -d '*.ng-hl.com' --force
+/root/.acme.sh/acme.sh --renew -d '*.ng-hl.com' --force
 ```
 
 Enfin, on simule l'exécution du cron précédemment créé avec le script `acme-deploy.sh`

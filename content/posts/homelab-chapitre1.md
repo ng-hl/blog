@@ -7,7 +7,7 @@ tags: ["homelab"]
 categories: ["homelab"]
 ---
 
-> Ce document contient les livrables issus de la phase de design du homelab. On doit se poser les bonnes questions pour répondre efficacement au besoin de départ, à savoir, disposer d'un environnement où l'on peut déployer rapidement des serveurs prêt à l'emploi pour divers cas d'usage. La conception est susceptible de changée au fur et à mesure des travaux, cette page est donc susceptible d'évoluer (mise à jour de l'inventaire, ajout de services/fonctionnalités, ...)
+> Ce document contient les livrables issus de la phase de design du homelab. On doit se poser les bonnes questions pour répondre efficacement au besoin de départ, à savoir, disposer d'un environnement où l'on peut déployer rapidement des serveurs prêt à l'emploi pour divers cas d'usage. La conception est susceptible de changer au fur et à mesure des travaux, cette page est donc susceptible d'évoluer (mise à jour de l'inventaire, ajout de services/fonctionnalités, ...)
 
 ---
 
@@ -186,18 +186,21 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
                 - [x] Accès par clé uniquement
                 - [x] Mise en place de fail2ban
             - [ ] Mise en place de nftables
-    - [ ] Mise en place de Gitlab
+    - [x] Mise en place de Gitlab
         - [x] Mise en place de l'OS via les templates
         - [x] Configuration de l'OS via Ansible
         - [x] Installation de Gitlab CE
         - [x] Configuration de base de Gitlab CE
         - [x] Configuration du HTTPS avec le certificat *.ng-hl.com
         - [x] Configuration du renouvellement automatique du certificat
-        - [ ] Tester le renouvellement du certificat (forcer) 
+        - [x] Tester le renouvellement du certificat (forcer) 
         - [x] Création d'un compte administrateur nominatif
         - [x] Création du groupe core
-        - [ ] Création du projet core/ansible et versionner le code existant
+        - [x] Création du projet core/ansible et versionner le code existant
         - [x] Création du projet core/deploy
+        - [x] Configuration l'utilisateur ngobert
+            - [x] Créer la paire de clé SSH pour l'utilisation de Git
+            - [x] Stocker la pare de clé SSH au niveau du coffre-fort
     - [ ] Terraform
         - [ ] Créer le projet core/terraform
         - [ ] Intégration du provider Proxmox

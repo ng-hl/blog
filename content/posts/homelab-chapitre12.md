@@ -1,7 +1,7 @@
 ---
 date: '2025-07-21T20:39:51+02:00'
 draft: true
-title: 'Chapitre 12 - Gitlab'
+title: 'Chapitre 12 - Terraform'
 summary: "Homelab - Chapitre 12 - Terraform"
 tags: ["homelab","terraform"]
 categories: ["homelab"]

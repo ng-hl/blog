@@ -20,7 +20,7 @@ params:
   homeInfoParams:
     Title: "Bienvenue sur mon blog"
     Content: >
-      Nicolas, passionné par l'univers GNU/Linux, l'open source, l'automatisation et le devOps. 
+      Nicolas, passionné par l'univers GNU/Linux, l'open source, l'automatisation et le DevOps. 
 
   socialIcons:
     - name: github

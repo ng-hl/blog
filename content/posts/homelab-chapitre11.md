@@ -118,3 +118,23 @@ On utilise les éléments mis en place lors du chapitre 9 pour gérer le renouve
     cert_name: gitlab.ng-hl.com.crt
     reload_cmd: gitlab-ctl reconfigure && gitlab-ctl restart
 ```
+
+---
+
+# 5. Création de la paire de clé SSH
+
+Afin de réaliser des opérations `git` plus rapidement et de façon sécurisée, nous allons générer une paire de clé ssh qui va être utilisée avec l'utilisateur `ngobert`. Pour cela, se rendre sur le serveur `gitlab-core` et générer la paire de clé en tant que l'utilisateur `ngobert` avec la commande suivante :
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/id_git-ngobert -C "Git ngobert"
+```
+
+Il est nécessaire de penser à stocker la clé privée et la clé publique au niveau du coffre-fort `vaultwarden-core`.
+
+---
+
+# 6. Configuration de l'utilisateur ngobert
+
+Se rendre sur la GUI de notre serveur `gitlab-core` puis se connecter avec l'utilisateur `ngobert`. Se rendre dans les préférences et dans la sactions `Clés SSH` et ajouter le contenu de la clé publique précédemment générée.
+
+![gitlab_ajout_cle_pub](/images/gitlab_ajout_cle_pub.png)
