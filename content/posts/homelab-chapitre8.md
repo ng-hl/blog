@@ -204,3 +204,101 @@ Avec le fichier template `motd.j2`
 #   Disk Usage   : {{ ansible_mounts[0].size_available | human_readable }}/{{ ansible_mounts[0].size_total | human_readable }}
 ########################################################
 ```
+
+---
+
+# 2. Ajout du linter
+
+Nous choisissions d'utiliser `ansible-lint` pour vérifier et corriger le code Ansible que je produit. Il s'agit de l'outil officiellement utilisé par `Ansible Galaxy`, l'outil est simple d'utilisation, permet de surveiller un certains nombre d'éléments comme la syntaxe, les bonnes pratiques syntaxiques, le respect de l'indempotence, etc. De plus, l'outil permet d'appliquer des corrections avec l'option `--fix` (anciennement `--write`). Nous installons également `yamllint`qui permet d'appliquer des vérification mais sur la syntaxe et les bonnes pratiques concernant le `yaml`.
+
+Nous avons déjà installé `ansible-lint` pendant l'installation et la configuration de `Ansible` au niveau du chapitre précédent (chapitre 7). Pour rappel la commande utilisée est celle-ci (à appliquer dans le contexte pipx de Ansible).
+
+```bash
+pipx install "ansible-lint[yamllint]"
+```
+
+Nous exécutons `ansible-lint` couplé à `yamllint` sur le playbook précédemment créé `00_config_vm.yml`
+
+```bash
+ansible-lint playbooks/00_config_vm.yml
+```
+
+Voici le récapitulatif des résultats obtenus :
+
+```bash
+# Rule Violation Summary
+
+  1 syntax-check profile:min tags:core,unskippable
+  6 schema profile:min tags:core
+ 29 yaml profile:min tags:formatting,yaml
+  1 yaml profile:min tags:formatting,yaml
+  2 yaml profile:min tags:formatting,yaml
+  2 yaml profile:min tags:formatting,yaml
+  3 yaml profile:min tags:formatting,yaml
+ 15 meta-incorrect profile:min tags:metadata
+  3 fqcn profile:min tags:formatting
+
+Failed: 62 failure(s), 0 warning(s) on 31 files.
+```
+
+Après application du `fix`, il reste 51 remontées.
+
+```bash
+# Rule Violation Summary
+
+  1 syntax-check profile:min tags:core,unskippable
+  6 schema profile:min tags:core
+ 29 yaml profile:min tags:formatting,yaml
+ 15 meta-incorrect profile:min tags:metadata
+
+Failed: 51 failure(s), 0 warning(s) on 31 files.
+```
+
+Ci-dessous, un exemple de modification concernant les meta informations du rôle `security_ssh`. Voici le fichier avant les modifications :
+
+```bash
+---
+#SPDX-License-Identifier: MIT-0
+galaxy_info:
+  author: your name
+  description: your role description
+  company: your company (optional)
+
+  # If the issue tracker for your role is not on github, uncomment the
+  # next line and provide a value
+  # issue_tracker_url: http://example.com/issue/tracker
+
+  # Choose a valid license ID from https://spdx.org - some suggested licenses:
+  # - BSD-3-Clause (default)
+  # - MIT
+  # - GPL-2.0-or-later
+  # - GPL-3.0-only
+  # - Apache-2.0
+  # - CC-BY-4.0
+  license: license (GPL-2.0-or-later, MIT, etc)
+```
+
+Voici le fichier après les modifications :
+
+```bash
+---
+#SPDX-License-Identifier: MIT-0
+galaxy_info:
+  author: Nicolas Gobert
+  description: Sécurisation du daemon sshd
+  company: Homelab
+
+  # If the issue tracker for your role is not on github, uncomment the
+  # next line and provide a value
+  # issue_tracker_url: http://example.com/issue/tracker
+
+  # Choose a valid license ID from https://spdx.org - some suggested licenses:
+  # - BSD-3-Clause (default)
+  # - MIT
+  # - GPL-2.0-or-later
+  # - GPL-3.0-only
+  # - Apache-2.0
+  # - CC-BY-4.0
+  license: MIT
+```
+

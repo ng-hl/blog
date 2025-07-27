@@ -144,9 +144,11 @@ Nous installons `Ansible` via pipx
 # Ansible classique
 pipx install --include-deps ansible
 
-# Le lint de Ansible
-pipx install ansible-lint
+# Le lint de Ansible (voir la section 2 du chapitre 8)
+pipx install "ansible-lint[yamllint]"
 ```
+
+> Nous parlons plus en détail de `ansible-lint` au la section 2 du chapitre 8.
 
 A ce stade, nous pouvons vérifier que `Ansible` est correctement installé en appelant la commande ansible et en véirifiant la version
 

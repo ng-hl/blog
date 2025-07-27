@@ -173,9 +173,9 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
             - [x] Installer le paquet python3
             - [x] Tester le bon fonctionnement des exécutions Ansible
         - [x] Gestion de l'adresse IP temporaire pour les nouvelles VM
-        - [ ] Convertir les actions manuelles de configurations mineures avec Ansible (intégrer les actions de la section Sécurisation -> Templates / VM, voir plus bas)
-        - [ ] Ajouter un linter
-        - [ ] Tester le bon fonctionnement
+        - [x] Convertir les actions manuelles de configurations mineures avec Ansible (intégrer les actions de la section Sécurisation -> Templates / VM, voir plus bas)
+        - [x] Ajouter un linter
+        - [x] Tester le bon fonctionnement
     - [ ] Sécurisation
         - [ ] pfSense
             - [x] Activer le HTTPS
