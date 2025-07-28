@@ -162,7 +162,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 ## 6.2. 🐬 
 
 - [ ] Niveau 2
-    - [ ] Mise en place de Ansible
+    - [X] Mise en place de Ansible
         - [x] Mise en place de l'OS via les templates
         - [x] Activer la sauvegarde depuis Proxmox
         - [x] Modifications mineures de l'OS (changement du hostname, configuration réseau)
@@ -180,6 +180,14 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [ ] pfSense
             - [x] Activer le HTTPS
             - [ ] Activer le renouvellement automatique du certificat TLS
+                - [x] Création de l'utilisateur restreint `acme-deploy` pour connexion SSH
+                - [x] Générer une clé SSH pour l'utilisateur
+                - [x] Valider l'accés SSH
+                - [ ] Configurer des droit d'écriture dans un répertoire spécifique
+                - [ ] Configurer l'exécution d'un script spécifique pour déclencher le chargement du certificat
+                - [ ] Création du script `̀import-and-reload-cert.sh`
+                - [ ] Mise à jour de `config.xml`
+                - [ ] Rechargement des services nécessaires
         - [ ] Templates / VM
             - [x] Durcissement de SSH
                 - [x] Désactivation de l'accès root en direct via SSH

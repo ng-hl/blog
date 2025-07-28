@@ -39,19 +39,40 @@ Afin de rendre l'interface webgui de pfSense accessible depuis le WAN, il est n�
 
 ---
 
-# Application du HTTPS et renouvellement automatique du certificat
+# 3. Application du HTTPS et renouvellement automatique du certificat
 
 > A partir du chapitre 9 concernant le certificat wildcard *.ng-hl.com et le service acme, nous passons le serveur pfSense accessible seulement via HTTPS et nous configurons le renouvellement automatique du certificat via acme
 
 Pour activé HTTPS sur pfSense, il suffit d'ajouter le contenu des éléments du certificat à savoir le fullchain et la clé privée associé au format .pem. dans la section "System" -> "Certificates".
 
-Concernant le renouvellement automatique, il faut tout d'abord activer l'accés en SSH sur notre pfSense. Pour cela, se rendre dans la section "System" -> "Advanced" -> "Admin Access" pour activer "Secure Shell Server" et préciser le public key only. De plus, il est nécessaire d'ouvrir le flux en provenance de `acme-core` sur l'adresse de pfSense de l'interface core `192.168.100.254` sur le port tcp/22.
+---
 
+# 4. Renouvellement automatique du certificat (à partir du chapitre 9 - ACME)
 
+Concernant le renouvellement automatique, il faut tout d'abord activer l'accés en SSH sur notre pfSense. Pour cela, se rendre dans la section "System" -> "Advanced" -> "Admin Access" pour activer "Secure Shell Server" et préciser le public key only. De plus, il est nécessaire d'ouvrir le flux en provenance de `acme-core` sur l'adresse de pfSense de l'interface core `192.168.100.254` sur le port tcp/22. 
+
+Nous créons l'utilisateur `acme-deploy`, qui appartient temporairement au groupe `admins`, via la GUI de pfSense. "System" -> "Advanced" -> "User Manager".
+
+On récupère la clé SSH publique de l'utilisateur `root` du serveur `acme-core` pour l'ajouter dans les `Authorized SSH Keys` de l'utilisateur `acme-deploy` dans pfSense. Enfin, on ajoute le privilège `User - System: Shell account access` pour l'utilisateur.
+
+Nous ajoutons l'entrée ci-dessous dans le fichier `/root/.ssh/config` sur le serveur `acme-core` :
+
+```bash
+Host pfsense-core.homelab
+    User acme-deploy
+    IdentityFile ~/.ssh/id_acme
+```
+
+Nous validons l'accès via SSH depuis `acme-deploy` vers `pfsense-core`
+
+```bash
+ssh pfsense-core.homelab
+[2.8.0-RELEASE][acme-deploy@pfsense.ng-hl.com]/home/acme-deploy: 
+```
 
 ---
 
-# 3. Règles (WIP)
+# X. Règles (WIP)
 
 | Date     | Description    | 
 |:-:    |:-:    |
