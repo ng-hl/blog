@@ -176,24 +176,25 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [x] Convertir les actions manuelles de configurations mineures avec Ansible (intégrer les actions de la section Sécurisation -> Templates / VM, voir plus bas)
         - [x] Ajouter un linter
         - [x] Tester le bon fonctionnement
-    - [ ] Sécurisation
-        - [ ] pfSense
+    - [x] Sécurisation
+        - [x] pfSense
             - [x] Activer le HTTPS
             - [ ] Activer le renouvellement automatique du certificat TLS
-                - [x] Création de l'utilisateur restreint `acme-deploy` pour connexion SSH
-                - [x] Générer une clé SSH pour l'utilisateur
-                - [x] Valider l'accés SSH
-                - [ ] Configurer des droit d'écriture dans un répertoire spécifique
-                - [ ] Configurer l'exécution d'un script spécifique pour déclencher le chargement du certificat
-                - [ ] Création du script `̀import-and-reload-cert.sh`
-                - [ ] Mise à jour de `config.xml`
-                - [ ] Rechargement des services nécessaires
-        - [ ] Templates / VM
+                - [x] Installation du module acme
+                - [x] Configuration de l'Account Key acme
+                - [x] Configuration du certificate acme
+                - [x] Test avec le staging acme
+                - [x] Faire un snapshot avec le passage en production
+                - [x] Test avec la production acme
+                - [x] Mise en place du HTTPS avec le certificat nouvellement créé
+                - [x] Vérification des autres services + forcer un renouvellement via acme depuis pfSense et depuis acme-core
+        - [x] Templates / VM
             - [x] Durcissement de SSH
                 - [x] Désactivation de l'accès root en direct via SSH
                 - [x] Accès par clé uniquement
                 - [x] Mise en place de fail2ban
-            - [ ] Mise en place de nftables
+            - [x] Mise en place de nftables
+                - [x] Configuration de base (ping et ssh depuis admin-core)
     - [x] Mise en place de Gitlab
         - [x] Mise en place de l'OS via les templates
         - [x] Configuration de l'OS via Ansible
@@ -215,10 +216,10 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [ ] Création d'une VM
         - [ ] Suppression d'une VM
         - [ ] Récupérer les informations pour avoir un inventaire dynamique
-    - [ ] Nom de domaine
-        - [x] Réserver un nom de domaine (CloudFlare, Duck DNS, ...)
-        - [x] Générer le certificat wildcard *.ng-hl.com avec acme.sh
-        - [ ] Gérer le renouvellement automatique avec acme.sh
+    - [x] Nom de domaine
+        - [x] Réserver un nom de domaine (CloudFlare)
+        - [x] Générer le certificat wildcard *.ng-hl.com
+        - [x] Gérer le renouvellement automatique avec acme.sh
     - [ ] Append : Coffre fort (Vaultwarden)
         - [x] Mise en place de l'OS via les templates
         - [x] Configuration de l'OS via Ansible ou manuellement suivant l'exécution de la tâche

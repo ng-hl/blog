@@ -37,6 +37,7 @@ Les opérations sont les mêmes pour les deux distributions. Au niveau de Proxmo
 
 Voici la procédure utilisée pour configurer l'OS qui va servir de template
 
+## 3.1 Mise à jour de l'OS
 ```bash
 # Mise à jour du cache du gestionnaire de paquet et mise à jour des packages
 # Debian12
@@ -46,10 +47,14 @@ apt update && apt upgrade -y
 sudo yum update -y
 ```
 
+## 3.2 Installation de SSH et Sudo
+
 ```bash
 # Installation du serveur openssh et sudo
 apt install -y openssh-server sudo
 ```
+
+## 3.3 Création de l'utilisateur ansible et gestion de la paire de clé associée
 
 ```bash
 # Création de l'utilisateur ansible
@@ -64,9 +69,11 @@ sudo ssh-keygen -t ed25519 -f /root/identites/id_admin -C "Utilisateur d'adminis
 sudo ssh-keygen -t ed25519 -f /root/identites/id_ansible -C "Utilisateur Ansible"
 ```
 
-> A partit du chapitre 10, "Coffre fort", nous pourrons nous servir de la solution `VaultWarden`pour stocker les clés SSH précédemment générées.
+> A partir du chapitre 10, "Coffre fort", nous pourrons nous servir de la solution `VaultWarden`pour stocker les clés SSH précédemment générées.
 
 Ces clés doivent être stockées dans un environnement sécurisée. On peut autoriser notre clé privée à se connecter sur les machines en collant le contenu de la clé publique (*.pub) au niveau du fichier `/home/ngobert/.ssh/authorized_keys` et du fichier `/home/ansible/.ssh/authorized_keys`
+
+## 3.4 Configuration temporaire du réseau
 
 ```bash
 # Configuration du réseau (adresse IP standard non utilisable dans ce contexte)
@@ -82,11 +89,15 @@ iface eth0 inet static
 nmtui
 ```
 
+## 3.5 Configuration de sudo pour l'utilisateur ansible
+
 Enfin, nous offrons la possibilité à l'utilisateur `ansible` d'exécuter toutes les commandes avec `sudo` sans demande de saisie du mot de passe. Pour cela, nous créons le fichier `/etc/sudoers.d/ansible` avec la ligne suivante
 
 ```bash
 ansible ALL=(ALL) NOPASSWD: ALL
 ```
+
+## 3.6 Durcissement de la configuration du daemon sshd
 
 Nous modifions la configuration du daemon sshd pour améliorer la sécurité en autorisant uniquement la connexion ssh avec les utilisateurs `ngobert` et `root` avec une clé, on écoute uniquement sur l'interface choisie, etc.
 
@@ -115,6 +126,8 @@ Subsystem       sftp    /usr/lib/openssh/sftp-server
 AllowUsers ngobert root ansible
 ```
 
+## 3.7 Mise en place de fail2ban
+
 Toujours dans l'optique d'améliorer la sécurité, nous installons et configurons la solution `fail2ban` pour SSH
 
 ```bash
@@ -140,4 +153,54 @@ Nous activons le daemon au démarrage du système et on l'exécute maintenant
 ```bash
 sudo systemctl enable fail2ban
 sudo systemctl restart fail2ban
+```
+
+## 3.8 Mise en place de nftables
+
+Enfin, pour durcir davantage la sécurité du serveur, nous installons et configurons le firewall `nftables`.
+
+```bash
+sudo apt install -y nftables
+```
+
+Nous activons le daemon nftables au démarrage du système
+
+```bash
+sudo systemctl enable nftables
+```
+
+Nous modifions sommairement le fichier de configuration de nftables pour appliquer une autorisation vers le port 22 pour les connexions ssh
+
+```bash
+#!/usr/sbin/nft -f
+
+table inet filter {
+  chain input {
+    type filter hook input priority 0;
+    policy drop;
+    iif lo accept
+    ct state established,related accept
+
+    ip protocol icmp accept
+
+    ip saddr 192.168.100.252 iifname "ens19" tcp dport 22 accept
+  }
+
+  chain forward {
+    type filter hook forward priority 0;
+    policy drop;
+  }
+
+  chain output {
+    type filter hook output priority 0;
+    policy accept;
+  }
+}
+```
+
+Nous vérifions la syntaxe du fichier de configuration `/etc/nftables.conf`, puis nous appliquons les modifications en faisant un restart du daemon
+
+```bash
+sudo nft -f /etc/nftables.conf
+sudo systemctl restart nftables
 ```

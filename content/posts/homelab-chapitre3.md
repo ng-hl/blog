@@ -49,26 +49,21 @@ Pour activé HTTPS sur pfSense, il suffit d'ajouter le contenu des éléments du
 
 # 4. Renouvellement automatique du certificat (à partir du chapitre 9 - ACME)
 
-Concernant le renouvellement automatique, il faut tout d'abord activer l'accés en SSH sur notre pfSense. Pour cela, se rendre dans la section "System" -> "Advanced" -> "Admin Access" pour activer "Secure Shell Server" et préciser le public key only. De plus, il est nécessaire d'ouvrir le flux en provenance de `acme-core` sur l'adresse de pfSense de l'interface core `192.168.100.254` sur le port tcp/22. 
+> Initialement, j'ai choisi d'utiliser le serveur `acme-core` pour gérer le renouvellement automatique du certificat dans le but de fédérer la partie acme. Après quelques tentatives et dans un soucis de mise en place de solution simple, correctement intégré tout en préservant la sécurité, j'ai choisi d'utiliser la fonctionnalité `acme` nativement disponible au sein de pfSense.
 
-Nous créons l'utilisateur `acme-deploy`, qui appartient temporairement au groupe `admins`, via la GUI de pfSense. "System" -> "Advanced" -> "User Manager".
+Nous allons utiliser le paquet `acme` présent nativement au sein du gestionnaire de paquet de pfSense. L'objectif est de configurer le client acme pour pouvoir interagir avec le service Cloudflare qui héberge le domaine `ng-hl.com`. 
 
-On récupère la clé SSH publique de l'utilisateur `root` du serveur `acme-core` pour l'ajouter dans les `Authorized SSH Keys` de l'utilisateur `acme-deploy` dans pfSense. Enfin, on ajoute le privilège `User - System: Shell account access` pour l'utilisateur.
+Tout d'abord, nous installatons le paquet `acme`. Se rendre dans "System" -> "Package Manager" -> "Available Packages" -> "acme". A présent, on peut retrouver dans l'onglet "Services" la section "Acme Certificates".
 
-Nous ajoutons l'entrée ci-dessous dans le fichier `/root/.ssh/config` sur le serveur `acme-core` :
+Ensuite, nous créons un `Account Key`. Il faut renseigner un nom et sélectionner le type de `ACME Server`. Pour faire des tests il convient de choisir l'environnement de Staging de Let's Encrypt et pour appliquer en production l'environnement de Production. L'account key est généré automatiquement par pfSense.
 
-```bash
-Host pfsense-core.homelab
-    User acme-deploy
-    IdentityFile ~/.ssh/id_acme
-```
+Maintenant, nous créons un `Certificate`, il est nécessaire de renseigner les champs utiles et de sélectionner l'Account Key précédemment créé. Dans la section, `Domain SAN list`, nous créons un éléments en mode `Enable`, avec le nom de domaine `*.ng-hl.com` et avec la méthode `DNS-Cloudflare`. Il ne nous reste plus qu'à renseigner le `token` qui nous permet d'écrire sur la zone DNS ng-hl.com sur `Cloudflare`. Enfin, nous pouvons également ajouter une action pour recharger le webgui de pfSense lors du passage de acme avec la méthode `Shell Command` et la commande `/etc/rc.restart_webgui`.
 
-Nous validons l'accès via SSH depuis `acme-deploy` vers `pfsense-core`
+> A ce stade, il est utile de faire un snapshot de la machine `pfsense-core.homelab` au niveau de Proxmox VE pour pouvoir revenir en arrière en cas de problème.
 
-```bash
-ssh pfsense-core.homelab
-[2.8.0-RELEASE][acme-deploy@pfsense.ng-hl.com]/home/acme-deploy: 
-```
+Pour exécuter le mécanisme `acme` et générer le certificat (si la date d'expiration le permet), il faut cliquer sur le bouton `Issues/Renew` dans l'onglt `Certificates` du service `acme`.
+
+Pour conclure, il ne nous reste plus qu'à appliquer le bon certificat en se dirigeant vers "System" -> "Advanced". Puis choisir le certificat nouvellement généré dans la liste déroulante.
 
 ---
 
