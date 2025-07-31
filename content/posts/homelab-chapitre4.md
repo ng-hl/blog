@@ -169,7 +169,9 @@ Nous activons le daemon nftables au démarrage du système
 sudo systemctl enable nftables
 ```
 
-Nous modifions sommairement le fichier de configuration de nftables pour appliquer une autorisation vers le port 22 pour les connexions ssh
+Nous modifions sommairement le fichier de configuration de nftables pour appliquer une autorisation vers le port 22 pour les connexions ssh.
+
+> `ansible-core.homelab` représente le serveur Ansible mis en place au chapitre 8.
 
 ```bash
 #!/usr/sbin/nft -f
@@ -183,7 +185,7 @@ table inet filter {
 
     ip protocol icmp accept
 
-    ip saddr 192.168.100.252 iifname "ens19" tcp dport 22 accept
+    ip saddr {{ admin-core.homelab, ansible-core.homelab }} iifname "ens19" tcp dport 22 accept
   }
 
   chain forward {
@@ -201,6 +203,6 @@ table inet filter {
 Nous vérifions la syntaxe du fichier de configuration `/etc/nftables.conf`, puis nous appliquons les modifications en faisant un restart du daemon
 
 ```bash
-sudo nft -f /etc/nftables.conf
+sudo nft -c -f /etc/nftables.conf
 sudo systemctl restart nftables
 ```

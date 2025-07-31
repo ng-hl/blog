@@ -60,7 +60,7 @@ Le coffre fort numérique va nous permettre de stocker divers mots de passe et s
 
 ## 2.6. Serveur de versionning
 
-Le serveur de versionning permettra la centralisation des différents éléments relatifs à notre infrastructure notammenent concernant l'infrastructure as code avec Terraform et Ansible. De plus, cette VM ouvre la possibilité d'automatiser nos déploiements futurs de VM via les runners et les fonctionnalités de la CI/CD. Le choix technique se portera sur la solution `Gitlab-ce`.
+Le serveur de versionning permettra la centralisation des différents éléments relatifs à notre infrastructure notammenent concernant l'infrastructure as code avec OpenTofu et Ansible. De plus, cette VM ouvre la possibilité d'automatiser nos déploiements futurs de VM via les runners et les fonctionnalités de la CI/CD. Le choix technique se portera sur la solution `Gitlab-ce`.
 
 ## 2.7. Stack d'observabilité
 
@@ -91,8 +91,8 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 | Niveau     | Description      | Services     | Déploiement
 |---    |:-:    |:-:    |:-:    |
 | 🐟    | Le homelab est fonctionnel, il est possible de déployer des VMs préconfigurées à la main via des templates.      | Firewall, DNS, machine d'administration     | Template de VM sur Proxmox
-| 🐬     | Le déploiement des VM est uniforme et automatisé. La machine de rebond centralisée peut communiquer avec l'entièreté des machines. Une PKI est en place ainsi que le nom de domaine ng-hl.com et une acme    | Gitlab-ce, Terraform, Ansible, PKI, certificat wildcard, acme     | Template de VM sur Proxmox avec Terraform et Ansible dans une pipeline Gitlab CI/CD 
-| 🐳    | La stack d'observabilité est en place et le dashboard Homepage prêt à l'emploi avec une évolution dynamique.     | Prometheus, Grafana, Homepage, notifications (Discord ?)       | Image préconfigurée sur Proxmox avec Terraform et Ansible dans une pipeline Gitlab CI/CD
+| 🐬     | Le déploiement des VM est uniforme et automatisé. La machine de rebond centralisée peut communiquer avec l'entièreté des machines. Une PKI est en place ainsi que le nom de domaine ng-hl.com et une acme    | Gitlab-ce, , Ansible, PKI, certificat wildcard, acme     | Template de VM sur Proxmox avec OpenTofu et Ansible dans une pipeline Gitlab CI/CD 
+| 🐳    | La stack d'observabilité est en place et le dashboard Homepage prêt à l'emploi avec une évolution dynamique.     | Prometheus, Grafana, Homepage, notifications (Discord ?)       | Image préconfigurée sur Proxmox avec OpenTofu et Ansible dans une pipeline Gitlab CI/CD
 
 ---
 
@@ -179,7 +179,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
     - [x] Sécurisation
         - [x] pfSense
             - [x] Activer le HTTPS
-            - [ ] Activer le renouvellement automatique du certificat TLS
+            - [x] Activer le renouvellement automatique du certificat TLS
                 - [x] Installation du module acme
                 - [x] Configuration de l'Account Key acme
                 - [x] Configuration du certificate acme
@@ -210,8 +210,8 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
         - [x] Configuration l'utilisateur ngobert
             - [x] Créer la paire de clé SSH pour l'utilisation de Git
             - [x] Stocker la pare de clé SSH au niveau du coffre-fort
-    - [ ] Terraform
-        - [ ] Créer le projet core/terraform
+    - [ ] OpenTofu
+        - [x] Créer le projet core/OpenTofu
         - [ ] Intégration du provider Proxmox
         - [ ] Création d'une VM
         - [ ] Suppression d'une VM
@@ -239,12 +239,104 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
             - [x] Configuration de acme + test de renouvellement forcé
             - [x] Script de déploiement du nouveau certificat (indexé sur la liste des services exposés)
             - [x] Test de bout en bout
+    - [ ] Pipeline CI/CD "vm-factory"
 
 ---
 
 ## 6.3. 🐳
 
-(WIP)
+- [ ] Prometheus
+    - [ ] Mise en place du serveur prometheus-core
+    - [ ] Intégration au niveau de la sauvegarde Proxmox VE
+    - [ ] Configuration de l'OS avec Ansible
+    - [ ] Installation de Prometheus
+    - [ ] Configuration de Prometheus
+    - [ ] Configuration du TLS sur prometheus.ng-hl.com
+    - [ ] Ouverture du flux sur pfSense vers prometheus-core
+    - [ ] Intégrer le renouvellement automatique du certificat via acme-core
+    - [ ] Intégration d'un hôte de test
+    - [ ] Création d'un rôle Ansible "prometheus-agent"
+    - [ ] Rédiger une ficher d'exploitation
+- [ ] Grafana
+    - [ ] Mise en place du serveur grafana-core
+    - [ ] Intégration au niveau de la sauvegarde Proxmox VE
+    - [ ] Configuration de l'OS avec Ansible
+    - [ ] Installation de Grafana
+    - [ ] Configuration de Grafana
+    - [ ] Configuration du TLS sur grafana.ng-hl.com
+    - [ ] Ouverture du flux sur pfSense vers grafana-core
+    - [ ] Intégrer le renouvellement automatique du certificat via acme-core
+    - [ ] Intégration de dashboards avec les templates
+    - [ ] Rédiger une ficher d'exploitation
+- [ ] Netbox
+    - [ ] Mise en place du serveur prometheus-core
+    - [ ] Intégration au niveau de la sauvegarde Proxmox VE
+    - [ ] Configuration de l'OS avec Ansible
+    - [ ] Installation de la stack Netbox
+        - [ ] PostgreSQL
+            - [ ] Installation de PostgreSQL
+            - [ ] Création de la DB
+            - [ ] Création de l'utilisation de la DB
+        - [ ] Installation de Redis
+        - [ ] Netbox
+            - [ ] Installation
+            - [ ] Création de l'utilisateur système pour netbox
+            - [ ] Modification de la configuration
+        - [ ] Gunicorn
+            - [ ] Installation
+            - [ ] Configuration
+        - [ ] uWSGI
+            - [ ] Installation
+            - [ ] Configuration
+        - [ ] nginx
+            - [ ] Installation
+            - [ ] Configuration
+            - [ ] Mise en place du TLS
+    - [ ] Rédiger une fiche d'exploitation
+    - [ ] Intégrer l'existant
+        - [ ] IPAM
+        - [ ] Virtualisation
+    - [ ] Rédiger une fiche d'exploitation
+- [ ] Gitlab CI/CD "vm-factory"
+    - [ ] Lien avec Prometheus
+    - [ ] Lien avec Grafana
+    - [ ] Lien avec NetBox
+    - [ ] Lien avec Homepage
+    - [ ] Rédiger une ficher d'exploitation
+- [ ] Homepage
+    - [ ] Mise en place du serveur homepage-core
+    - [ ] Intégration au niveau de la sauvegarde Proxmox VE
+    - [ ] Configuration de l'OS avec Ansible
+    - [ ] Création du volume Docker
+    - [ ] Déploiement via docker-compose
+    - [ ] Mise en place du TLS
+    - [ ] Exposition via homepage.ng-hl.com
+    - [ ] Evolution dynamique avec la CI/CD "vm-factory"
+- [ ] ELK
+    - [ ] Mise en place du serveur elk-core
+    - [ ] Intégration au niveau de la sauvegarde Proxmox VE
+    - [ ] Configuration de l'OS avec Ansible
+    - [ ] Installation de ELK
+        - [ ] Elastic Search
+            - [ ] Installation
+            - [ ] Configuration
+            - [ ] Mise en place du TLS : elastic.ng-hl.com
+            - [ ] Ficher d'exploitation
+        - [ ] Kibana
+            - [ ] Installation
+            - [ ] Configuration
+            - [ ] Mise en place du TLS kibana.ng-hl.com
+            - [ ] Fiche d'exploitation
+        - [ ] Logstash
+            - [ ] Installation
+            - [ ] Configuration
+            - [ ] Installation de Filebeat
+            - [ ] Configuration de Filebeat
+            - [ ] Mise en place du TLS kibana.ng-hl.com
+            - [ ] Fiche d'exploitation
+    - [ ] Consul
+    - [ ] Wazuh
+    - [ ] Infrastructure secondaire sous K8s
 
 ---
 
@@ -275,6 +367,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 | acme-core.homelab | 192.168.100.248 | Debian 12.10 |
 | vaultwarden-core.homelab   | 192.168.100.249 | Debian 12.10 | vaultwarden-core.ng-hl.com vaultwarden.ng-hl.com (CNAME) |
 | gitlab-core.homelab | 192.168.100.247 | Debian 12.10 | gitlab-core.ng-hl.com gitlab.ng-hl.com (CNAME)
-| terraform-core.homelab | 192.168.100.246 | Debian 12.10 |
+| opentofu-core.homelab | 192.168.100.246 | Debian 12.10 |
+| prometheus-core.homelab | 192.168.100.245 | Debian 12.10 | prometheus-core.ng-hl.com prometheus.ng-hl.com (CNAME)
 | ansibledev-core.homelab | 192.168.100.11 | Debian 12.10 |
 | debian12-template-core.homelab | 192.168.100.10 | Debian 12.10 |
