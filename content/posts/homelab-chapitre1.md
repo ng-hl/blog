@@ -246,12 +246,15 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service 
 ## 6.3. 🐳
 
 - [ ] Prometheus
-    - [ ] Mise en place du serveur prometheus-core
-    - [ ] Intégration au niveau de la sauvegarde Proxmox VE
-    - [ ] Configuration de l'OS avec Ansible
-    - [ ] Installation de Prometheus
-    - [ ] Configuration de Prometheus
+    - [x] Mise en place du serveur prometheus-core
+    - [x] Intégration au niveau de la sauvegarde Proxmox VE
+    - [x] Configuration de l'OS avec Ansible
+    - [x] Déploiement de Prometheus
+    - [x] Configuration de Prometheus
     - [ ] Configuration du TLS sur prometheus.ng-hl.com
+        - [x] Connexion SSH en root via la clé SSH `id_acme` 
+        - [ ] Rajout de la target `prometheus-core`
+        - [ ] Rajout de la commande de reload du container pour application
     - [ ] Ouverture du flux sur pfSense vers prometheus-core
     - [ ] Intégrer le renouvellement automatique du certificat via acme-core
     - [ ] Intégration d'un hôte de test
