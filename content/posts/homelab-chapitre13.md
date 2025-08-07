@@ -48,7 +48,8 @@ ansible-playbook -i envs/100-core/00_inventory.yml -l 'prometheus-core.homelab,'
 ```
 
 Voici le récapitulatif
-...
+ 
+```bash
 TASKS RECAP **********************************************************************************************************************
 vendredi 01 août 2025  21:32:25 +0200 (0:00:00.199)       0:00:06.948 ********* 
 =============================================================================== 
@@ -72,6 +73,7 @@ ipv6_disable : Désactivation de la prise en charge de l'IPv6 par défaut ------
 dns_config : Création du nouveau lien symbolique vers /etc/resolv.conf ---------------------------------------------------- 0.14s
 security_ssh : Désactivaction de l'authentification par mot de passe ------------------------------------------------------ 0.14s
 security_ssh : Activation de l'authentification par clé ------------------------------------------------------------------- 0.14s
+```
 
 ---
 
@@ -119,7 +121,11 @@ alerting:
 scrape_configs:
   - job_name: prometheus
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['https://prometheus.ng-hl.com:9090']
+    scheme: https
+    tls_config:
+      cert_file: '/etc/prometheus/fullchain.pem'
+      key_file: '/etc/prometheus/privkey.key'
   - job_name: admin-core
     static_configs:
       - targets: ['admin-core.homelab']
@@ -140,7 +146,7 @@ scp -i ~/.ssh/id_acme /etc/ssl/certs/wildcard.ng-hl.com/fullchain.pem root@prome
 
 Ensuite, on déplace les éléments dans `/opt/prometheus/certs/` et on modifier le propriétaire et le groupe `ngobert:ngobert`.
 
-Création du fichier `tls.yml`
+Création du fichier `web.yml`
 
 ```bash
 tls_server_config:
@@ -148,16 +154,67 @@ tls_server_config:
   key_file: /etc/prometheus/certs/privkey.pem
 ```
 
+> Par défaut Docker utilise iptables pour fonctionner. On force l'utilisation de `iptables-nft` pour Docker, qui est une surcouche utilisé par Docker pour utiliser la syntaxe de `iptables` mais c'est bel et bien le moteur `nftables` qui est utilisé.
+
+```bash
+sudo update-alternatives --set iptables /usr/sbin/iptables-nft
+sudo systemctl daemon-reexec
+sudo systemctl restart docker
+```
+
 Exécution du container
 
 ```bash
 docker run -d \
     -p 9090:9090 \
+    --name prometheus \
     -v /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
+    -v /opt/prometheus/web.yml:/etc/prometheus/web.yml \
+    -v /opt/prometheus/certs:/etc/prometheus/certs:ro \
     -v prometheus-data:/prometheus \
-    prom/prometheus
+    prom/prometheus \
+    --config.file=/etc/prometheus/prometheus.yml \
+    --web.config.file=/etc/prometheus/web.yml
 ```
 
 Modification du fichier de configuration nftables /etc/nftables.conf pour autoriser les requêtes HTTPS sur le port de prometheus `tcp:9090`.
 
 > Il faut également penser à ouvrir le flux depuis l'extérieur du homelab pour pouvoir y accéder depuis mon réseau local.
+
+Modification du fichier `/etc/nftables.conf` en ajoutant la ligne `tcp dport 9090 accept` pour ouvrir le port 9090
+
+```bash
+#!/usr/sbin/nft -f
+
+table inet filter {
+  chain input {
+    type filter hook input priority 0;
+    policy drop;
+    iif lo accept
+    ct state established,related accept
+
+    ip protocol icmp accept
+
+    
+    ip saddr {{ admin-core.homelab, ansible-core.homelab, acme-core.homelab }} iifname "ens19" tcp dport 22 accept
+    tcp dport 9090 accept
+      }
+
+  chain forward {
+    type filter hook forward priority 0;
+    policy drop;
+  }
+
+  chain output {
+    type filter hook output priority 0;
+    policy accept;
+  }
+}
+```
+
+Vérification de la syntaxe du fichier `/etc/nftables.conf` et restart du daemon `nftables`
+
+```bash
+sudo nft -c -f /etc/nftables.conf
+sudo systemctl restart nftables
+```
