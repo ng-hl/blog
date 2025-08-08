@@ -11,7 +11,66 @@ categories: ["homelab"]
 
 ---
 
-> Cette section couvre la partie reverse proxy avec `nginx`
+> Cette section couvre la partie reverse proxy avec `nginx`. Cette machine porte le nom `reverseproxysup-core.homelab` avec un CNAME `rps-core.homelab`.
+
+# 1. Création de la VM
+
+Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on crée un clone complet à partir de ce template. Voici les caractéristiques de la VM :
+
+| OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
+|:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
+| Debian 12.10     | reverseproxysup-core rps-core (CNAME)    | 192.168.100.242    | vmbr1 (core)    | 1     | 2048   | 20Gio
+
+Il faut également penser à activer la sauvegarde automatique de la VM sur Proxmox en l'ajoutant au niveau de la politique de sauvegarde précédemment créée.
+
+---
+
+# 2. Configuration de l'OS via Ansible
+
+> Les informations concernant Ansible sont disponibles au niveau des chapitres 7 et 8.
+
+A présent, le playbook et les rôles ayant pour objectif d'appliquer la configuration de base de l'OS sont disponibles. Il faut se connecter en tant que l'utilisateur `ansible` sur le serveur `ansible-core.homelab` puis ajouter l'hôte `rps-core.homelab` au niveau du fichier d'inventaire `/opt/ansible/envs/100-core/00_inventory.yml` avec les éléments suivants
+
+```yml
+rps-core.homelab:
+    ip: 192.168.100.242
+    hostname: reverseproxysup-core
+```
+
+Pour exécuter le playbook, il faut lancer la commande suivante
+
+```bash
+ansible-playbook -i envs/100-core/00_inventory.yml -l 'rps-core.homelab,' playbooks/00_config_vm.yml
+```
+
+Voici le récapitulatif
+
+```bash
+TASKS RECAP **********************************************************************************************************************
+vendredi 08 août 2025  23:14:22 +0200 (0:00:00.260)       0:00:14.348 ********* 
+=============================================================================== 
+base_packages : Installation des paquets de base -------------------------------------------------------------------------- 4.30s
+dns_config : Installation du paquet systemd-resolved ---------------------------------------------------------------------- 2.05s
+base_packages : Mise à jour du cache apt ---------------------------------------------------------------------------------- 1.88s
+Gathering Facts ----------------------------------------------------------------------------------------------------------- 1.06s
+dns_config : Autoremove et purge ------------------------------------------------------------------------------------------ 0.56s
+motd : Déploiement du motd ------------------------------------------------------------------------------------------------ 0.46s
+hostname_config : Modification du hostname -------------------------------------------------------------------------------- 0.44s
+dns_config : Enable du daemon systemd-resolved ---------------------------------------------------------------------------- 0.39s
+dns_config : Suppression du paquet resolvconf ----------------------------------------------------------------------------- 0.33s
+nftables : Déploiement de la configuration de nftables -------------------------------------------------------------------- 0.31s
+dns_config : Resart du daemon systemd-resolved ---------------------------------------------------------------------------- 0.30s
+nftables : Valider la configuration nftables ------------------------------------------------------------------------------ 0.27s
+security_ssh : Restart du daemon sshd ------------------------------------------------------------------------------------- 0.26s
+dns_config : Suppression du fichier /etc/resolv.conf ---------------------------------------------------------------------- 0.20s
+ipv6_disable : Désactivation de la prise en charge de l'IPv6 globalement -------------------------------------------------- 0.19s
+hostname_config : Modification du fichier /etc/hosts ---------------------------------------------------------------------- 0.19s
+dns_config : Configuration du DNS dans /etc/resolved.conf ----------------------------------------------------------------- 0.19s
+dns_config : Création du nouveau lien symbolique vers /etc/resolv.conf ---------------------------------------------------- 0.14s
+ipv6_disable : Désactivation de la prise en charge de l'IPv6 par défaut --------------------------------------------------- 0.14s
+security_ssh : Activation de l'authentification par clé ------------------------------------------------------------------- 0.14s
+```
+
 
 
 ---
@@ -40,12 +99,6 @@ A présent, le playbook et les rôles ayant pour objectif d'appliquer la configu
 prometheus-core.homelab:
     ip: 192.168.100.245
     hostname: prometheus-core
-```
-
-Il est nécessaire d'ajouter les droits sudo sur l'utilisateur `ansible` au niveau du fichier `/etc/sudoers.d/ansible` avec les éléments ci-dessous. Il s'agit d'un oubli au niveau du template. (À corriger plus tard).
-
-```bash
-ansible ALL=(ALL) NOPASSWD: ALL
 ```
 
 Pour exécuter le playbook, il faut lancer la commande suivante

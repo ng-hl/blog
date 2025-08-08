@@ -375,5 +375,6 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 | gitlab-core.homelab | 192.168.100.247 | Debian 12.10 | gitlab-core.ng-hl.com gitlab.ng-hl.com (CNAME)
 | opentofu-core.homelab | 192.168.100.246 | Debian 12.10 |
 | prometheus-core.homelab | 192.168.100.245 | Debian 12.10 | prometheus-core.ng-hl.com prometheus.ng-hl.com (CNAME)
+| reverseproxysup-core.homelab rps-core.homelab (CNAME) | 192.168.100.242 | Debian 12.10 |
 | ansibledev-core.homelab | 192.168.100.11 | Debian 12.10 |
 | debian12-template-core.homelab | 192.168.100.10 | Debian 12.10 |
