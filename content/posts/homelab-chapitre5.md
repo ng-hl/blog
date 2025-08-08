@@ -13,7 +13,7 @@ categories: ["homelab"]
 
 # 1. Création de la VM
 
-Nous allons utiliser le template `debian12-template` créé lors du chapitre précédent. Sur Proxmox on créé un clone complet à partir de ce template. Voici les caractéristiques de la VM :
+Nous allons utiliser le template `debian12-template` créé lors du chapitre précédent. Sur Proxmox on crée un clone complet à partir de ce template. Voici les caractéristiques de la VM :
 
 | OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
 |:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
@@ -59,9 +59,9 @@ sudo hostnamectl set-hostname dns-core.homelab
 
 # 3. Installation de bind9
 
-Bind9 est un service DNS trés répandu sur les serveur de type GNU/LInux.
+Bind9 est un service DNS très répandu sur les serveurs de type GNU/Linux.
 
-Nous allons commencer par installer les paquets `bind9` et `bind9-doc` qui contient la documentation.
+Nous allons commencer par installer les paquets `bind9` et `bind9-doc` qui contiennent la documentation.
 
 ```bash
 sudo apt install -y bind9 bind9-doc
@@ -71,7 +71,7 @@ sudo apt install -y bind9 bind9-doc
 
 # 4. Configuration de bind9
 
-La première chose que nous allons faire est de configurer le forwarder vers notre `pfSense` en `192.168.100.254` pour le réseau `core` et `192.168.200.254` pour le réseau `vms`. Ainsi, lorsque nous souhaiterons faire une requête DNS qui n'est pas couverte par notre serveur bind9 la requête sera forwarder vers pfSense qui lui même va renvoyer la requête sur ma box internet sur mon réseau local. Mes VM auront pourrons donc résoudre les noms de domaine d'Internet, non déclarés sur mon bind9. Pour cela, nous éditons le fichier `/etc/bind9/named.conf.options`
+La première chose que nous allons faire est de configurer le forwarder vers notre `pfSense` en `192.168.100.254` pour le réseau `core` et `192.168.200.254` pour le réseau `vms`. Ainsi, lorsque nous souhaiterons faire une requête DNS qui n'est pas couverte par notre serveur bind9 la requête sera forwardée vers pfSense qui lui-même va renvoyer la requête sur ma box internet sur mon réseau local. Mes VM pourront donc résoudre les noms de domaine d'Internet, non déclarés sur mon bind9. Pour cela, nous éditons le fichier `/etc/bind9/named.conf.options`
 
 ```bash
 # On décommente les lignes concernant le forwarder puis on renseigne l'IP désirée

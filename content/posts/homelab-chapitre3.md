@@ -15,7 +15,7 @@ categories: ["homelab"]
 
 # 1. Installation de pfSense
 
-Aprés avoir récupéré l'ISO de pfSense sur le site officiel, plus précisément sur le dépôt officiel car il faut s'inscrire pour obtenir l'ISO depuis le site. J'ai installé pfSense avec une configuration classique sans apporter de particularités majeures.
+Après avoir récupéré l'ISO de pfSense sur le site officiel, plus précisément sur le dépôt officiel car il faut s'inscrire pour obtenir l'ISO depuis le site. J'ai installé pfSense avec une configuration classique sans apporter de particularités majeures.
 
 ---
 
@@ -43,7 +43,7 @@ Afin de rendre l'interface webgui de pfSense accessible depuis le WAN, il est n�
 
 > A partir du chapitre 9 concernant le certificat wildcard *.ng-hl.com et le service acme, nous passons le serveur pfSense accessible seulement via HTTPS et nous configurons le renouvellement automatique du certificat via acme
 
-Pour activé HTTPS sur pfSense, il suffit d'ajouter le contenu des éléments du certificat à savoir le fullchain et la clé privée associé au format .pem. dans la section "System" -> "Certificates".
+Pour activer HTTPS sur pfSense, il suffit d'ajouter le contenu des éléments du certificat à savoir le fullchain et la clé privée associée au format .pem dans la section "System" -> "Certificates".
 
 ---
 
@@ -53,15 +53,15 @@ Pour activé HTTPS sur pfSense, il suffit d'ajouter le contenu des éléments du
 
 Nous allons utiliser le paquet `acme` présent nativement au sein du gestionnaire de paquet de pfSense. L'objectif est de configurer le client acme pour pouvoir interagir avec le service Cloudflare qui héberge le domaine `ng-hl.com`. 
 
-Tout d'abord, nous installatons le paquet `acme`. Se rendre dans "System" -> "Package Manager" -> "Available Packages" -> "acme". A présent, on peut retrouver dans l'onglet "Services" la section "Acme Certificates".
+Tout d'abord, nous installons le paquet `acme`. Se rendre dans "System" -> "Package Manager" -> "Available Packages" -> "acme". À présent, on peut retrouver dans l'onglet "Services" la section "Acme Certificates".
 
-Ensuite, nous créons un `Account Key`. Il faut renseigner un nom et sélectionner le type de `ACME Server`. Pour faire des tests il convient de choisir l'environnement de Staging de Let's Encrypt et pour appliquer en production l'environnement de Production. L'account key est généré automatiquement par pfSense.
+Ensuite, nous créons un `Account Key`. Il faut renseigner un nom et sélectionner le type de `ACME Server`. Pour faire des tests il convient de choisir l'environnement de Staging de Let's Encrypt et pour appliquer en production l'environnement de Production. L'account key est générée automatiquement par pfSense.
 
-Maintenant, nous créons un `Certificate`, il est nécessaire de renseigner les champs utiles et de sélectionner l'Account Key précédemment créé. Dans la section, `Domain SAN list`, nous créons un éléments en mode `Enable`, avec le nom de domaine `*.ng-hl.com` et avec la méthode `DNS-Cloudflare`. Il ne nous reste plus qu'à renseigner le `token` qui nous permet d'écrire sur la zone DNS ng-hl.com sur `Cloudflare`. Enfin, nous pouvons également ajouter une action pour recharger le webgui de pfSense lors du passage de acme avec la méthode `Shell Command` et la commande `/etc/rc.restart_webgui`.
+Maintenant, nous créons un `Certificate`, il est nécessaire de renseigner les champs utiles et de sélectionner l'Account Key précédemment créée. Dans la section, `Domain SAN list`, nous créons un élément en mode `Enable`, avec le nom de domaine `*.ng-hl.com` et avec la méthode `DNS-Cloudflare`. Il ne nous reste plus qu'à renseigner le `token` qui nous permet d'écrire sur la zone DNS ng-hl.com sur `Cloudflare`. Enfin, nous pouvons également ajouter une action pour recharger le webgui de pfSense lors du passage de acme avec la méthode `Shell Command` et la commande `/etc/rc.restart_webgui`.
 
 > A ce stade, il est utile de faire un snapshot de la machine `pfsense-core.homelab` au niveau de Proxmox VE pour pouvoir revenir en arrière en cas de problème.
 
-Pour exécuter le mécanisme `acme` et générer le certificat (si la date d'expiration le permet), il faut cliquer sur le bouton `Issues/Renew` dans l'onglt `Certificates` du service `acme`.
+Pour exécuter le mécanisme `acme` et générer le certificat (si la date d'expiration le permet), il faut cliquer sur le bouton `Issues/Renew` dans l'onglet `Certificates` du service `acme`.
 
 Pour conclure, il ne nous reste plus qu'à appliquer le bon certificat en se dirigeant vers "System" -> "Advanced". Puis choisir le certificat nouvellement généré dans la liste déroulante.
 

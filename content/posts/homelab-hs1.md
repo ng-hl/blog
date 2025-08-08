@@ -13,7 +13,7 @@ categories: ["homelab"]
 
 # 1. Création de la VM
 
-Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on créé un clone complet à partir de ce template. Voici les caractéristiques de la VM :
+Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on crée un clone complet à partir de ce template. Voici les caractéristiques de la VM :
 
 | OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
 |:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
@@ -49,7 +49,7 @@ Enfin, nous devons recharger la configuration courante.
 sudo sysctl -p
 ```
 
-A présent, nous changons le hostname de la VM pour que ce soit `kresus-vms.homelab`, puis nous modifions le contenu de son résolveur DNS local `/etc/hosts`
+A présent, nous changeons le hostname de la VM pour que ce soit `kresus-vms.homelab`, puis nous modifions le contenu de son résolveur DNS local `/etc/hosts`
 
 ```bash
 sudo hostnamectl set-hostname kresus-vms.homelab
@@ -98,7 +98,7 @@ Current Scopes: LLMNR/IPv4
      Protocols: -DefaultRoute +LLMNR -mDNS -DNSOverTLS DNSSEC=no/unsupported
 ```
 
-Enfin, on test quelques résolutions DNS avec notre nouvelle configuration
+Enfin, on teste quelques résolutions DNS avec notre nouvelle configuration
 
 ```bash
 dig +short dns-core.homelab
@@ -116,13 +116,13 @@ dig +short google.com
 
 > Il est nécessaire d'installer `Docker engine` pour procéder à la mise en place de kresus via docker compose
 
-On créé le volume Docker pour avoir la persistance des données concernant la base de données Postgresql
+On crée le volume Docker pour avoir la persistance des données concernant la base de données PostgreSQL
 
 ```bash
 docker volume create pgdata
 ```
 
-Nous utilisons Docker compose pour disposer de deux container. Le premier étant celui qui porte l'applicatif kresus et le second va permettre de loadbalancer le traffic arrivant en HTTPS vers le container kresus. On créé le fichier `/opt/kresus/docker-compose.yml`
+Nous utilisons Docker compose pour disposer de deux containers. Le premier étant celui qui porte l'applicatif kresus et le second va permettre de load-balancer le trafic arrivant en HTTPS vers le container kresus. On crée le fichier `/opt/kresus/docker-compose.yml`
 
 ```bash
 ---
@@ -183,7 +183,7 @@ On se positionne en tant que root sur la vm `acme-core` qui contient le certific
 
 ```bash
 scp /etc/ssl/certs/wildcard.ng-hl.com/fullchain.pem ngobert@kresus-vms.homelab:/opt/kresus/certs/
-scp /etc/ssl/private/wildcard.ng-hl.com/privkey.key ngobert@kresus-vms.homelab:/opt/kresus/crets/privkey.pem
+scp /etc/ssl/private/wildcard.ng-hl.com/privkey.key ngobert@kresus-vms.homelab:/opt/kresus/certs/privkey.pem
 ```
 
 Nous créons le fichier de configuration de nginx `/opt/kresus/nginx/conf.d/kresus.conf`
@@ -226,7 +226,7 @@ Se connecter en tant que root sur la VM `acme-core`, puis ajouter les informatio
   reload_cmd: "cd /opt/kresus && docker compose restart"
 ```
 
-On peut tester que le nouveau service est bien prit en compte en forcant l'exécution de acme avec le script ci-dessous 
+On peut tester que le nouveau service est bien pris en compte en forçant l'exécution de acme avec le script ci-dessous 
 
 ```bash
 /root/acme-deploy/acme-deploy.sh

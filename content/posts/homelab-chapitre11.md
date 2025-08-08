@@ -13,7 +13,7 @@ categories: ["homelab"]
 
 # 1. Création de la VM
 
-Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on créé un clone complet à partir de ce template. Voici les caractéristiques de la VM :
+Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on crée un clone complet à partir de ce template. Voici les caractéristiques de la VM :
 
 | OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
 |:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
@@ -27,7 +27,7 @@ Il faut également penser à activer la sauvegarde automatique de la VM sur Prox
 
 > Les informations concernant Ansible sont disponibles au niveau des chapitres 7 et 8.
 
-A présent, le playbook et les roles ayant pour objectif d'appliquer la configuration de base de l'OS sont disponible. Il faut se connecter en tant que l'utilisateur `ansible` sur le serveur `ansible-core.homelab` puis ajouter l'hôte `gitlab-core.homelab` au niveau du fichier d'inventaire `/opt/ansible/envs/100-core/00_inventory.yml` avec les éléments suivants
+A présent, le playbook et les rôles ayant pour objectif d'appliquer la configuration de base de l'OS sont disponibles. Il faut se connecter en tant que l'utilisateur `ansible` sur le serveur `ansible-core.homelab` puis ajouter l'hôte `gitlab-core.homelab` au niveau du fichier d'inventaire `/opt/ansible/envs/100-core/00_inventory.yml` avec les éléments suivants
 
 ```yml
 gitlab-core.homelab:
@@ -35,7 +35,7 @@ gitlab-core.homelab:
     hostname: gitlab-core
 ```
 
-Il est nécessaire d'ajouter les droits sudo sur l'utilisateur `ansible` au niveau du fichier `/etc/sudoers.d/ansible` avec les éléments ci-dessous. Il s'agit d'un oubli au niveau du template. (A corriger plus tard).
+Il est nécessaire d'ajouter les droits sudo sur l'utilisateur `ansible` au niveau du fichier `/etc/sudoers.d/ansible` avec les éléments ci-dessous. Il s'agit d'un oubli au niveau du template. (À corriger plus tard).
 
 ```bash
 ansible ALL=(ALL) NOPASSWD: ALL
@@ -96,7 +96,7 @@ sudo EXTERNAL_URL="https://gitlab.ng-hl.com" apt-get install gitlab-ce
 
 On peut se connecter sur l'interface en HTTPS (avec un certificat auto-signé pour le moment) en tant que `root`. La première chose à faire est de créer un autre utilisateur que l'on va appeler `ngobert` avec les droits administrateur puis on désactive la fonctionnalité qui permet la création de nouveau compte depuis l'interface de connexion.
 
-Enfin, pour que notre certificat wildcard *.ng-hl.com puisse porter le HTTPS, on récupère les fichiers de certificat et la clé privée pour les positionner au niveau du répertoire `/etc/gitlab/ssl` sur le serveur `gitlab-core.homelab` avec respectivement les noms `gitlab.ng-hl.com.crt` et `gitlab.ng-hl.com.key` puis on recharge gitlab avec les commandes ci-dessous.
+Enfin, pour que notre certificat wildcard *.ng-hl.com puisse porter le HTTPS, on récupère les fichiers de certificat et la clé privée pour les positionner au niveau du répertoire `/etc/gitlab/ssl` sur le serveur `gitlab-core.homelab` avec respectivement les noms `gitlab.ng-hl.com.crt` et `gitlab.ng-hl.com.key` puis on recharge Gitlab avec les commandes ci-dessous.
 
 ```bash
 sudo gitlab-ctl reconfigure
@@ -107,7 +107,7 @@ sudo gitlab-ctl restart
 
 # 4. Renouvellement automatique du certificat
 
-On utilise les éléments mis en place lors du chapitre 9 pour gérer le renouvellement des certificats TLS via acme depuis le serveur `acme-core.homelab`. Il est nécessaire d'autoriser la clé `id_acme.pud` pour se connecter en tant que root sur le serveur `gitlab-core.homelab`. Je choisi ici d'utiliser l'utilisateur root et non pas ngobert pour éviter d'ouvrir des droits sudo pour exécuter les commandes `gitlab-ctl reconfigure` et `gitlab-ctl restart`. Enfin, il faut que l'on ajoute les éléments suivant dans le fichier `/root/acme-deploy/targets.yml`
+On utilise les éléments mis en place lors du chapitre 9 pour gérer le renouvellement des certificats TLS via acme depuis le serveur `acme-core.homelab`. Il est nécessaire d'autoriser la clé `id_acme.pub` pour se connecter en tant que root sur le serveur `gitlab-core.homelab`. Je choisis ici d'utiliser l'utilisateur root et non pas ngobert pour éviter d'ouvrir des droits sudo pour exécuter les commandes `gitlab-ctl reconfigure` et `gitlab-ctl restart`. Enfin, il faut que l'on ajoute les éléments suivants dans le fichier `/root/acme-deploy/targets.yml`
 
 ```bash
 - host: gitlab-core.homelab
@@ -123,7 +123,7 @@ On utilise les éléments mis en place lors du chapitre 9 pour gérer le renouve
 
 # 5. Création de la paire de clé SSH
 
-Afin de réaliser des opérations `git` plus rapidement et de façon sécurisée, nous allons générer une paire de clé ssh qui va être utilisée avec l'utilisateur `ngobert`. Pour cela, se rendre sur le serveur `gitlab-core` et générer la paire de clé en tant que l'utilisateur `ngobert` avec la commande suivante :
+Afin de réaliser des opérations `git` plus rapidement et de façon sécurisée, nous allons générer une paire de clés SSH qui va être utilisée avec l'utilisateur `ngobert`. Pour cela, se rendre sur le serveur `gitlab-core` et générer la paire de clés en tant que l'utilisateur `ngobert` avec la commande suivante :
 
 ```bash
 ssh-keygen -t ed25519 -f ~/.ssh/id_git-ngobert -C "Git ngobert"
@@ -135,6 +135,6 @@ Il est nécessaire de penser à stocker la clé privée et la clé publique au n
 
 # 6. Configuration de l'utilisateur ngobert
 
-Se rendre sur la GUI de notre serveur `gitlab-core` puis se connecter avec l'utilisateur `ngobert`. Se rendre dans les préférences et dans la sactions `Clés SSH` et ajouter le contenu de la clé publique précédemment générée.
+Se rendre sur la GUI de notre serveur `gitlab-core` puis se connecter avec l'utilisateur `ngobert`. Se rendre dans les préférences et dans la section `Clés SSH` et ajouter le contenu de la clé publique précédemment générée.
 
 ![gitlab_ajout_cle_pub](/images/gitlab_ajout_cle_pub.png)

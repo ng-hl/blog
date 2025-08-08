@@ -15,7 +15,7 @@ Kubernetes ou K8s est un produit open source (ouvert par Google en 2014) qui per
 
 # Todo list
 
-> Pour le moment, la todo list ci-dessous est élaborée grâce au points abordés dans la documentation officielle de Kubernetes et par rapport à la playlist Kubernetes V2 proposée par Xavki.
+> Pour le moment, la todo list ci-dessous est élaborée grâce aux points abordés dans la documentation officielle de Kubernetes et par rapport à la playlist Kubernetes V2 proposée par Xavki.
 
 - [ ] Kubernetes
     - [x] Architecture

@@ -13,13 +13,13 @@ categories: ["homelab"]
 
 # 1. Création de la VM
 
-Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on créé un clone complet à partir de ce template. Voici les caractéristiques de la VM :
+Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on crée un clone complet à partir de ce template. Voici les caractéristiques de la VM :
 
 | OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
 |:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
 | Debian 12.10     | opentofu-core      | 192.168.100.246    | vmbr1 (core)    | 1     | 2048   | 20Gio
 
-Il s'agit d'un serveur qui ne contiendra pas de données persistente critique. Je choisi donc de ne pas appliquer de stratégie de sauvegarde sur cette machine.
+Il s'agit d'un serveur qui ne contiendra pas de données persistantes critiques. Je choisis donc de ne pas appliquer de stratégie de sauvegarde sur cette machine.
 
 ---
 
@@ -27,7 +27,7 @@ Il s'agit d'un serveur qui ne contiendra pas de données persistente critique. J
 
 > Les informations concernant Ansible sont disponibles au niveau des chapitres 7 et 8.
 
-A présent, le playbook et les roles ayant pour objectif d'appliquer la configuration de base de l'OS sont disponible. Il faut se connecter en tant que l'utilisateur `ansible` sur le serveur `ansible-core.homelab` puis ajouter l'hôte `opentofu-core.homelab` au niveau du fichier d'inventaire `/opt/ansible/envs/100-core/00_inventory.yml` avec les éléments suivants
+A présent, le playbook et les rôles ayant pour objectif d'appliquer la configuration de base de l'OS sont disponibles. Il faut se connecter en tant que l'utilisateur `ansible` sur le serveur `ansible-core.homelab` puis ajouter l'hôte `opentofu-core.homelab` au niveau du fichier d'inventaire `/opt/ansible/envs/100-core/00_inventory.yml` avec les éléments suivants
 
 ```yml
 opentofu-core.homelab:
@@ -35,7 +35,7 @@ opentofu-core.homelab:
     hostname: opentofu-core
 ```
 
-Il est nécessaire d'ajouter les droits sudo sur l'utilisateur `ansible` au niveau du fichier `/etc/sudoers.d/ansible` avec les éléments ci-dessous. Il s'agit d'un oubli au niveau du template. (A corriger plus tard).
+Il est nécessaire d'ajouter les droits sudo sur l'utilisateur `ansible` au niveau du fichier `/etc/sudoers.d/ansible` avec les éléments ci-dessous. Il s'agit d'un oubli au niveau du template. (À corriger plus tard).
 
 ```bash
 ansible ALL=(ALL) NOPASSWD: ALL

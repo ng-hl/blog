@@ -15,7 +15,7 @@ categories: ["homelab"]
 
 > Modification récente pour le hostname notamment concernant le domaine. `vaultwarden-core.ng-hl.com`
 
-Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on créé un clone complet à partir de ce template. Voici les caractéristiques de la VM :
+Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on crée un clone complet à partir de ce template. Voici les caractéristiques de la VM :
 
 | OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
 |:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
@@ -36,7 +36,7 @@ iface ens19 inet static
     gateway 192.168.100.254
 ```
 
-> __Un point important !__ Pendant la création du template `debian12-template` la désactivation de l'IPv6 n'a pas été faite. Il faut donc faire cela à la main pour chaque VM déployées et noter l'information quelque part pour ajouter cette configuration lorsque nous aurons Ansible pour le déploiement des VM.
+> __Un point important !__ Pendant la création du template `debian12-template` la désactivation de l'IPv6 n'a pas été faite. Il faut donc faire cela à la main pour chaque VM déployée et noter l'information quelque part pour ajouter cette configuration lorsque nous aurons Ansible pour le déploiement des VM.
 
 Désactivation permanente de l'IPv6. Nous devons éditer ce fichier de configuration `/etc/sysctl.conf`
 
@@ -51,7 +51,7 @@ Enfin, nous devons recharger la configuration courante.
 sudo sysctl -p
 ```
 
-A présent, nous changons le hostname de la VM pour que ce soit `vaultwarden-core.homelab`, puis nous modifions le contenu de son résolveur DNS local `/etc/hosts`
+A présent, nous changeons le hostname de la VM pour que ce soit `vaultwarden-core.homelab`, puis nous modifions le contenu de son résolveur DNS local `/etc/hosts`
 
 ```bash
 sudo hostnamectl set-hostname vaultwarden-core.homelab
@@ -100,7 +100,7 @@ Current Scopes: LLMNR/IPv4
      Protocols: -DefaultRoute +LLMNR -mDNS -DNSOverTLS DNSSEC=no/unsupported
 ```
 
-Enfin, on test quelques résolutions DNS avec notre nouvelle configuration
+Enfin, on teste quelques résolutions DNS avec notre nouvelle configuration
 
 ```bash
 dig +short dns-core.homelab
@@ -118,10 +118,10 @@ dig +short google.com
 
 > Il est nécessaire d'installer Docker Engine en amont puis on ajoute l'utilisateur `ngobert` au groupe `docker`
 
-On créé la structure de répertoire pour hébergé le service vaultwarden ainsi que le certificat wildcard
+On crée la structure de répertoire pour héberger le service vaultwarden ainsi que le certificat wildcard
 
 ```bash
-mkdir -p /opt/vaulwarden/ssl
+mkdir -p /opt/vaultwarden/ssl
 ```
 
 Pour téléverser les éléments du certificat depuis acme-core, on utilise rsync
@@ -133,10 +133,10 @@ sudo rsync -avz /root/.acme.sh/*.ng-hl.com_ecc/{fullchain.cer,*.ng-hl.com.key}  
 On renomme la clé privée du certificat pour plus de simplicité d'utilisation
 
 ```bash
-mv \*.ng-hl.com.key privkey.key 
+mv *.ng-hl.com.key privkey.key 
 ```
 
-On créé le volumes Docker
+On crée le volume Docker
 
 ```bash
 docker volume create vaultwarden-volume
@@ -179,11 +179,11 @@ docker run --detach --name vaultwarden \
 
 # 4. Exposition du service sur le réseau local
 
-Pour rendre le service `vaultwarden` sur le réseau local, il est nécessaire d'ouvrir le flux à destination de cette VM sur le port 443 et du serveur DNS du homelab sur UDP/53 et TCP/53. De plus, il est nécessaire d'ajouter un route statique en passant par 192.168.1.49 (le pfsense) pour joindre le réseau 192.168.100.0/24.
+Pour rendre le service `vaultwarden` accessible sur le réseau local, il est nécessaire d'ouvrir le flux à destination de cette VM sur le port 443 et du serveur DNS du homelab sur UDP/53 et TCP/53. De plus, il est nécessaire d'ajouter une route statique en passant par 192.168.1.49 (le pfSense) pour joindre le réseau 192.168.100.0/24.
 
 ---
 
-# 5. Accés au service
+# 5. Accès au service
 
 Pour se connecter au service VaultWarden : `https://vaultwarden-core.ng-hl.com` ou `https://vaultwarden.ng-hl.com` (CNAME associé)
 

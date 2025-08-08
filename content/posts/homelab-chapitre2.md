@@ -19,7 +19,7 @@ Proxmox VE (Virtual Environment) est un hyperviseur de type 1 et open source. Ce
 |:-:    |---    |
 | Prise en charge complète de la virtualisation avec KVM     | Support de la virtualisation de machines QEMU/KVM     |
 | Prise en charge des conteneurs LXC     | Conteneurisation légère et native sous Linux    |
-| Interface web     | Interface web qui permet d'interragir avec les éléments de gestion liés à Proxmox VE ainsi que les VM et les containers     |
+| Interface web     | Interface web qui permet d'interagir avec les éléments de gestion liés à Proxmox VE ainsi que les VM et les containers     |
 | Cluster     | Gestion centralisée du cluster dans le cas où plusieurs nodes sont présents    |
 | HA     | Possibilité de configurer des bascules automatiques pour assurer la continuité de service     |
 | Snapshots et sauvegardes     | Gestion des snapshots et des sauvegardes    |
@@ -56,17 +56,17 @@ Il ne reste plus qu'à rafraîchir le cache du gestionnaire de paquets côté sy
 
 C'est l'équivalent d'un `sudo apt update` sur une GNU/Linux Debian par exemple.
 
-Enfin, pour mettre à jour les paquets remontés par le refraîchissement précédemment effectué, il est nécessaire de se connecter en tant que root ou via un utilisateur appartenant au groupe `sudo` (ce qui n'est pas le cas lorsque l'on a une installation par défaut de Proxmox VE) via le Realm PAM. Une fois que l'on clique dur "Update" une fenêtre console du système apparaît et nous demande confirmation. C'est comme si nous faisions un `sudo apt upgrade` directement via la cli.
+Enfin, pour mettre à jour les paquets remontés par le rafraîchissement précédemment effectué, il est nécessaire de se connecter en tant que root ou via un utilisateur appartenant au groupe `sudo` (ce qui n'est pas le cas lorsque l'on a une installation par défaut de Proxmox VE) via le Realm PAM. Une fois que l'on clique sur "Update" une fenêtre console du système apparaît et nous demande confirmation. C'est comme si nous faisions un `sudo apt upgrade` directement via la cli.
 
 ![Upgrade](/images/upgrade.png)
 
-Il est important de faire les opérations d'upate et d'upgrade régulièrement pour maintenir le système de Proxmox VE à jour. C'est tout aussi simple de passer directement via la cli `apt update && apt upgrade -y`. Il est possible d'envisager de créer un cron pour exécuter cette action régulièrement.
+Il est important de faire les opérations d'update et d'upgrade régulièrement pour maintenir le système de Proxmox VE à jour. C'est tout aussi simple de passer directement via la cli `apt update && apt upgrade -y`. Il est possible d'envisager de créer un cron pour exécuter cette action régulièrement.
 
 ## 2.3. Mise en place de la sauvegarde
 
-J'ai un serveur `NAS Synology` sur lequel j'ai ajouté un répertoire partagé sur le réseau appelé "Proxmox_backups". Pour l'ajouter au niveau de Proxmox VE, il faut se rendre dans la section "Storage", cliquer sur "Add, sélectionner le type "SMB" et renseigner les informations nécessaires (IP, nom d'utilisateur, mot de passe et le nom du répertoire partagé). Je choisi d'inclure les "Disk images", "VZDump backup file" et "Container".
+J'ai un serveur `NAS Synology` sur lequel j'ai ajouté un répertoire partagé sur le réseau appelé "Proxmox_backups". Pour l'ajouter au niveau de Proxmox VE, il faut se rendre dans la section "Storage", cliquer sur "Add", sélectionner le type "SMB" et renseigner les informations nécessaires (IP, nom d'utilisateur, mot de passe et le nom du répertoire partagé). Je choisis d'inclure les "Disk images", "VZDump backup file" et "Container".
 
-Pour que les sauvegardes fonctionnent, il faut à présent ajouter une politique de sauvegarde pour cela on se rend dans le menu "Backups" puis on clique sur "Add". Je choisi de mettre en place une programmation des sauvegardes tous les jours à minuit et d'appliquer la politique de sauvegarde sur l'unique VM que j'ai pour le moment. Tant que la création de VM n'est pas automatisée, il faudra penser à activer la sauvegarde pour chaque VM que l'on souhaite (celles du core). Concernant la rétention, je choisi de conserver les 5 dernières sauvegardes.
+Pour que les sauvegardes fonctionnent, il faut à présent ajouter une politique de sauvegarde pour cela on se rend dans le menu "Backups" puis on clique sur "Add". Je choisis de mettre en place une programmation des sauvegardes tous les jours à minuit et d'appliquer la politique de sauvegarde sur l'unique VM que j'ai pour le moment. Tant que la création de VM n'est pas automatisée, il faudra penser à activer la sauvegarde pour chaque VM que l'on souhaite (celles du core). Concernant la rétention, je choisis de conserver les 5 dernières sauvegardes.
 
 ![Backup configuration](/images/backup-configuration.png)
 

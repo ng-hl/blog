@@ -15,7 +15,7 @@ categories: ["homelab"]
 
 > Cette section est susceptible d'évoluer avec le temps. Des évolutions peuvent être appliquées avec l'acquisition de plus de compute pour améliorer les performances et la résilience ainsi que la mise en place d'un système de stockage plus adapté comme un NAS.
 
-Pour mettre en place ce homelab, il nous faut un appareil qui dispose de suffisemment de compute soit au moins 32Go de RAM et 16vCPU ainsi qu'un minimum d'espace disque soit 1To. De plus, cette machine va être disponible tout le temps 24h/24 7j/7, il est donc important de prendre une solution qui ne comsome pas trop d'énergie.
+Pour mettre en place ce homelab, il nous faut un appareil qui dispose de suffisamment de compute soit au moins 32Go de RAM et 16vCPU ainsi qu'un minimum d'espace disque soit 1To. De plus, cette machine va être disponible tout le temps 24h/24 7j/7, il est donc important de prendre une solution qui ne consomme pas trop d'énergie.
 
 | Date      | Compute      | Stockage      | Niveau de maturité      |
 |:-:    |:-:    |:-:    |:-:    |
@@ -25,7 +25,7 @@ Pour mettre en place ce homelab, il nous faut un appareil qui dispose de suffise
 
 # 1. Les environnements
 
-Le homelab va être divisé en deux sous-réseaux principaux. Le premier ayant pour objectif d'héberger les divers services utiles au bon fonctionnement du homelab. Le second sera dédié au déploiement et à l'utilisation des VMs et containers pour les tests futures de technologie, OS, etc.
+Le homelab va être divisé en deux sous-réseaux principaux. Le premier ayant pour objectif d'héberger les divers services utiles au bon fonctionnement du homelab. Le second sera dédié au déploiement et à l'utilisation des VMs et containers pour les tests futurs de technologie, OS, etc.
 
 | Nom      | Description      | Adressage      |
 |:-:    |---    |---    |
@@ -40,35 +40,35 @@ Pour disposer d'un environnement fonctionnel et confortable, nous avons besoin d
 
 ## 2.1. Firewall
 
-Il s'agit de la seul VM qui aura une interface réseau directement sur mon réseau local (interface WAN d'un point de vue Firewall) et de ce fait, obtiendra une IP en 192.168.1.0/24. L'objectif est de gérer les autorisations concernant les communications entrantes et sortantes au niveau du homelab. Le choix technique se portera sur la solution `pfSense`.
+Il s'agit de la seule VM qui aura une interface réseau directement sur mon réseau local (interface WAN d'un point de vue Firewall) et de ce fait, obtiendra une IP en 192.168.1.0/24. L'objectif est de gérer les autorisations concernant les communications entrantes et sortantes au niveau du homelab. Le choix technique se portera sur la solution `pfSense`.
 
 ## 2.2. Serveur DNS
 
-Le DNS va nous permettre d'utiliser les noms associés à nos VM plutôt que les IP avec deux zones DNS `.homelab` (DNS interne du homelab) aisni que `ng-hl.com` (le domaine qui portera les services exposés sur mon réseau local). Le choix technique se portera sur la solution `bind9`. 
+Le DNS va nous permettre d'utiliser les noms associés à nos VM plutôt que les IP avec deux zones DNS `.homelab` (DNS interne du homelab) ainsi que `ng-hl.com` (le domaine qui portera les services exposés sur mon réseau local). Le choix technique se portera sur la solution `bind9`. 
 
 ## 2.3. Machine d'administration centrale
 
-Cette VM sera le point d'entrée vers les ressources du homelab. L'objectif est d'avoir une machine en frontal juste derrière le firewall avec un accés SSH ouvert depuis le WAN (mon réseau local) accessible à certaines IP. Cette machine pourra faire office de rebond et pourra héberger un certains nombre d'outils.
+Cette VM sera le point d'entrée vers les ressources du homelab. L'objectif est d'avoir une machine en frontal juste derrière le firewall avec un accès SSH ouvert depuis le WAN (mon réseau local) accessible à certaines IP. Cette machine pourra faire office de rebond et pourra héberger un certain nombre d'outils.
 
 ## 2.4. Serveur de gestion des configuration
 
-Ce service va nous permettre de déployer les configurations des OS que nous déployons. Les actions serons initialisées manuellement dans un premier temps puis nous pourrons intégrer l'outil au sein d'une pipeline via Gitlab-CI plus tard. Le choix technique se portera sur la solution `Ansible`.
+Ce service va nous permettre de déployer les configurations des OS que nous déployons. Les actions seront initialisées manuellement dans un premier temps puis nous pourrons intégrer l'outil au sein d'une pipeline via Gitlab-CI plus tard. Le choix technique se portera sur la solution `Ansible`.
 
 ## 2.5. Coffre fort numérique
 
-Le coffre fort numérique va nous permettre de stocker divers mots de passe et secrets. Le choix technique se portera sur `VaultWarden`, solution alternative et open source à BitWarden.
+Le coffre-fort numérique va nous permettre de stocker divers mots de passe et secrets. Le choix technique se portera sur `VaultWarden`, solution alternative et open source à BitWarden.
 
 ## 2.6. Serveur de versionning
 
-Le serveur de versionning permettra la centralisation des différents éléments relatifs à notre infrastructure notammenent concernant l'infrastructure as code avec OpenTofu et Ansible. De plus, cette VM ouvre la possibilité d'automatiser nos déploiements futurs de VM via les runners et les fonctionnalités de la CI/CD. Le choix technique se portera sur la solution `Gitlab-ce`.
+Le serveur de versionning permettra la centralisation des différents éléments relatifs à notre infrastructure notamment concernant l'infrastructure as code avec OpenTofu et Ansible. De plus, cette VM ouvre la possibilité d'automatiser nos déploiements futurs de VM via les runners et les fonctionnalités de la CI/CD. Le choix technique se portera sur la solution `Gitlab-ce`.
 
 ## 2.7. Stack d'observabilité
 
-L'objectif est de disposer d'outils nous permettant de monitorer et de superviser les OS et les services grâce à la collecte des metriques ainsi qu'à l'alerting. Le choix technique se portera sur la "suite" `Prometheus/Grafana`.
+L'objectif est de disposer d'outils nous permettant de monitorer et de superviser les OS et les services grâce à la collecte des métriques ainsi qu'à l'alerting. Le choix technique se portera sur la "suite" `Prometheus/Grafana`.
 
 ## 2.8. Dashboard central
 
-Afin de facilité l'administration du homelab et l'utilisation des différents service, nous allons mettre en place un dashboard moderne et confortable afin d'inventorier l'intégralité des services mis à disposition au sein du homelab. Le choix technique se portera sur `Homepage`
+Afin de faciliter l'administration du homelab et l'utilisation des différents services, nous allons mettre en place un dashboard moderne et confortable afin d'inventorier l'intégralité des services mis à disposition au sein du homelab. Le choix technique se portera sur `Homepage`
 
 ---
 
@@ -86,7 +86,7 @@ Afin de facilité l'administration du homelab et l'utilisation des différents s
 
 # 5. Priorisation
 
-Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de service requis, nous allons définir differents niveaux de maturité avec les mises en place des différents services qui y sont associées.
+Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services requis, nous allons définir différents niveaux de maturité avec les mises en place des différents services qui y sont associées.
 
 | Niveau     | Description      | Services     | Déploiement
 |---    |:-:    |:-:    |:-:    |

@@ -13,7 +13,7 @@ categories: ["homelab"]
 
 # 1. Création de la VM
 
-Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on créé un clone complet à partir de ce template. Voici les caractéristiques de la VM :
+Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on crée un clone complet à partir de ce template. Voici les caractéristiques de la VM :
 
 | OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
 |:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
@@ -25,7 +25,7 @@ Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. 
 
 > Les informations concernant Ansible sont disponibles au niveau des chapitres 7 et 8.
 
-A présent, le playbook et les roles ayant pour objectif d'appliquer la configuration de base de l'OS sont disponible. Il faut se connecter en tant que l'utilisateur `ansible` sur le serveur `ansible-core.homelab` puis ajouter l'hôte `crewai-vms.homelab` au niveau du fichier d'inventaire `/opt/ansible/envs/200-core/00_inventory.yml` avec les éléments suivants
+A présent, le playbook et les rôles ayant pour objectif d'appliquer la configuration de base de l'OS sont disponibles. Il faut se connecter en tant que l'utilisateur `ansible` sur le serveur `ansible-core.homelab` puis ajouter l'hôte `crewai-vms.homelab` au niveau du fichier d'inventaire `/opt/ansible/envs/200-core/00_inventory.yml` avec les éléments suivants
 
 ```yml
 crewai-vms.homelab:
@@ -70,9 +70,9 @@ dns_config : Configuration du domaine dans /etc/resolved.conf ------------------
 
 # 3. Installation de crewAI
 
-> Pour installer crewAI, il est nécessaire que le paquet `python3` soit installé sur le serveur. On peut vérifier avec cette commande `python3 --version`. Si aucune version de Python n'est détecté, il faut l'installer avec la commande suivante `sudo apt install -y python3`.
+> Pour installer crewAI, il est nécessaire que le paquet `python3` soit installé sur le serveur. On peut vérifier avec cette commande `python3 --version`. Si aucune version de Python n'est détectée, il faut l'installer avec la commande suivante `sudo apt install -y python3`.
 
-> Pour créer l'environnement Python isolé spécifique à crewAI, nous utilisons python UV (outils en Rust). Cette solution permet d'isoler proprement l'environnement virtuel et d'avoir des performances accrues concernant l'utilisation de pip (uv pip) et d'autres fonctionnalités de gestion trés intéressantes.
+> Pour créer l'environnement Python isolé spécifique à crewAI, nous utilisons python UV (outil en Rust). Cette solution permet d'isoler proprement l'environnement virtuel et d'avoir des performances accrues concernant l'utilisation de pip (uv pip) et d'autres fonctionnalités de gestion très intéressantes.
 
 Nous installons `uv`
 
@@ -92,7 +92,7 @@ Nous créons le répertoire qui va contenir la solution `crewai`
 sudo mkdir /opt/crewai-project && sudo chown ngobert:ngobert /opt/crewai-project
 ```
 
-Nous créons l'envrionnement virtuel géré par `uv` puis on se positionne à l'intérieur pour réaliser les opérations suivantes
+Nous créons l'environnement virtuel géré par `uv` puis on se positionne à l'intérieur pour réaliser les opérations suivantes
 
 ```bash
 # Création
@@ -108,7 +108,7 @@ Nous lançons l'installation de `crewai` et des éléments annexes nécessaires.
 uv pip install crewai langchain langchain-community openai python-dotenv
 ```
 
-Enfin, nous pouvons vérifier que l'installation de `crewai`est fonctionnelle
+Enfin, nous pouvons vérifier que l'installation de `crewai` est fonctionnelle
 
 ```bash
 crewai --version
@@ -116,15 +116,15 @@ crewai --version
 
 # 4. Création du projet poc
 
-Le projet que nous allons créer s'appel `poc`. L'outil `crewai` fournit une commande pour générer l'arborescence d'un projet.
+Le projet que nous allons créer s'appelle `poc`. L'outil `crewai` fournit une commande pour générer l'arborescence d'un projet.
 
 ```bash
 crewai create crew poc
 ```
 
-Pendant la création, nous sélectionnons le provider `openai`. Enfin, il est nécessaire de disposer d'un token pour interragir avec l'API d'openai. Pour cela, il faut se rendre sur ce [site](https://platform.openai.com) afin d'en générer un.
+Pendant la création, nous sélectionnons le provider `openai`. Enfin, il est nécessaire de disposer d'un token pour interagir avec l'API d'openai. Pour cela, il faut se rendre sur ce [site](https://platform.openai.com) afin d'en générer un.
 
-Voici le rendu que l'on doit avoir après avoir remplit toutes les informations demandées
+Voici le rendu que l'on doit avoir après avoir rempli toutes les informations demandées
 
 ```bash
 API keys and model saved to .env file
@@ -143,12 +143,12 @@ Selected model: gpt-4
 Crew poc created successfully!
 ```
 
-Le projet `poc` porte sur la création d'une équipe de développeur ayant pour objectif la réalisation d'une application web simple. Une page affiche un formulaire avec 4 cases à cocher (oui ou non) qui répondent à des questions :
+Le projet `poc` porte sur la création d'une équipe de développeurs ayant pour objectif la réalisation d'une application web simple. Une page affiche un formulaire avec 4 cases à cocher (oui ou non) qui répondent à des questions :
 - Heures de sommeil + 7h
 - Prise des compléments alimentaires
 - Entraînement
 - + 10 000 pas
-Ces informations sont ensuite stockées dans une base de données afin de conserver les éléments. Il est possible de répondre aux questions une seule fois par jour et un dashboard permet de voir les résultats quotidient. Tout les éléments seront packagés dans un docker-compose.yml et exécuté avec `docker compose`.
+Ces informations sont ensuite stockées dans une base de données afin de conserver les éléments. Il est possible de répondre aux questions une seule fois par jour et un dashboard permet de voir les résultats quotidiens. Tous les éléments seront packagés dans un docker-compose.yml et exécutés avec `docker compose`.
 L'équipe de développement sera composée des agents suivants :
 - Chef de projet, il définit les étapes du projet, supervise et coordonne l'équipe
 - Développeur, il implémente le code (Python Flask)

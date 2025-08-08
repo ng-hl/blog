@@ -7,7 +7,7 @@ tags: ["homelab"]
 categories: ["homelab"]
 ---
 
-> Ce document contient les livrables issus de la phase de création des templates pour les OS Debian 12 et Rocky Linux 9. L'objectif est de pouvoir disposer de templates de VM afin de créer facilement des clônes complets pour avoir une configuration de base pour l'ensemble de nos VM (utilisateur, clés SSH, installation des paquets de base, ...)
+> Ce document contient les livrables issus de la phase de création des templates pour les OS Debian 12 et Rocky Linux 9. L'objectif est de pouvoir disposer de templates de VM afin de créer facilement des clones complets pour avoir une configuration de base pour l'ensemble de nos VM (utilisateur, clés SSH, installation des paquets de base, ...)
 
 ---
 
@@ -24,12 +24,12 @@ Nous avons besoin des ISO suivants pour réaliser la création de nos templates.
 
 # 2. Création des templates
 
-Les opérations sont les mêmes pour les deux distributions. Au niveau de Proxmox lors de la création des VM nous allons attribuer les ID 10001 et 10002 (la convention de nommage pour les templates 1000X pour notre homelab), activer le qemu guest agent, créer un disque SCSi de 20Go avec émulation SSD, 1 vCPU, 2048 Mo de RAM avec le balloning activé, une carte réseau positionnée sur le vmbr0 pour avoir un accés par pont au réseau local puis le tag `templates`. Les éléments suivants vont être configurés pour les deux VM créées à partir des ISO précédement récupérés.
+Les opérations sont les mêmes pour les deux distributions. Au niveau de Proxmox lors de la création des VM nous allons attribuer les ID 10001 et 10002 (la convention de nommage pour les templates 1000X pour notre homelab), activer le qemu guest agent, créer un disque SCSI de 20Go avec émulation SSD, 1 vCPU, 2048 Mo de RAM avec le ballooning activé, une carte réseau positionnée sur le vmbr0 pour avoir un accès par pont au réseau local puis le tag `templates`. Les éléments suivants vont être configurés pour les deux VM créées à partir des ISO précédemment récupérés.
 
 | Item      | Debian 12.10     | Rocky Linux 9.5
 |:-:    |:-:    |:-:
 | Agent QEMU   | Installé (qemu-guest-agent package)     | Installé (qemu-guest-agent package) 
-| Hostmane     | debian12-template      | rocky9-template
+| Hostname     | debian12-template      | rocky9-template
 | Domaine      | homelab                | homelab
 | Partitionnement     | LVM (/boot 512Mo, / 10Go, /home 3Go, /var 5Go, SWAP 1Go )      | LVM (/boot 512Mo, / 10Go, /home 3Go, /var 5Go, SWAP 1Go )
 
@@ -69,9 +69,9 @@ sudo ssh-keygen -t ed25519 -f /root/identites/id_admin -C "Utilisateur d'adminis
 sudo ssh-keygen -t ed25519 -f /root/identites/id_ansible -C "Utilisateur Ansible"
 ```
 
-> A partir du chapitre 10, "Coffre fort", nous pourrons nous servir de la solution `VaultWarden`pour stocker les clés SSH précédemment générées.
+> À partir du chapitre 10, "Coffre fort", nous pourrons nous servir de la solution `VaultWarden` pour stocker les clés SSH précédemment générées.
 
-Ces clés doivent être stockées dans un environnement sécurisée. On peut autoriser notre clé privée à se connecter sur les machines en collant le contenu de la clé publique (*.pub) au niveau du fichier `/home/ngobert/.ssh/authorized_keys` et du fichier `/home/ansible/.ssh/authorized_keys`
+Ces clés doivent être stockées dans un environnement sécurisé. On peut autoriser notre clé privée à se connecter sur les machines en collant le contenu de la clé publique (*.pub) au niveau du fichier `/home/ngobert/.ssh/authorized_keys` et du fichier `/home/ansible/.ssh/authorized_keys`
 
 ## 3.4 Configuration temporaire du réseau
 

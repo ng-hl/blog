@@ -71,7 +71,7 @@ sudo lvcreate -L 1G -n lv-1 vg-1
 
 # Formatage du LV
 sudo mkf.<fs_type> <lv_path>
-sudo mkfs.ext4 /dev/vg1/lv-1
+sudo mkfs.ext4 /dev/vg-1/lv-1
 
 # Montage du FS
 sudo mount <lv_path> <fs_path>
@@ -116,7 +116,7 @@ sudo lvremove /dev/vg-1/lv-1
 sudo vgremove <vg_name>
 sudo vgremove vg-1
 
-# Suppresison du PV (suppression du label)
+# Suppression du PV (suppression du label)
 sudo pvremove <device>
 sudo pvremove /dev/sdb
 ```
