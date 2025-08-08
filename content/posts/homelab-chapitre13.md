@@ -2,14 +2,21 @@
 date: '2025-07-31T21:56:48+02:00'
 draft: false
 title: 'Chapitre 13 - Prometheus'
-summary: "Homelab - Chapitre 13 - Prometheus"
+summary: "Homelab - Chapitre 13 - Prometheus/Grafana"
 tags: ["homelab","prometheus"]
 categories: ["homelab"]
 ---
 
-> Ce document contient les livrables issus de la mise en place du service `Prometheus`. L'objectif est de pouvoir disposer d'un serveur de collecte de métriques pour la supervision. L'outil sera couplé avec `Grafana` pour la partie dashboard.
+> Ce document contient les livrables issus de la mise en place du service `Prometheus`, `Grafana` et `AlertsManager`. L'objectif est de pouvoir disposer de services, concernant la collecte de métriques, l'exposition de dashboards et la génération d'alertes avec notifications par mail. Côté architecture, un reverse proyx `nginx` sera en frontal pour porter le certficat wildcard `*.ng-hl.com` et redirigera vers le serveur adéquat. Pour le niveau de maturité niveau 2, le chiffrement TLS sera appliqué uniquement au niveau de l'exposition vers l'extérieur à savoir le `nginx`. Concernant le niveau 3, il faudra mettre en place des communications chiffrés via TLS au travers de certificats fournit par une PKI interne pour adopter le principe d'une architecture 0 trust.
 
 ---
+
+> Cette section couvre la partie reverse proxy avec `nginx`
+
+
+---
+
+> Cette section couvre la partie `Prometheus`
 
 # 1. Création de la VM
 

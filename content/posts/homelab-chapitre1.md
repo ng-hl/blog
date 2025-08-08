@@ -91,8 +91,8 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 | Niveau     | Description      | Services     | Déploiement
 |---    |:-:    |:-:    |:-:    |
 | 🐟    | Le homelab est fonctionnel, il est possible de déployer des VMs préconfigurées à la main via des templates.      | Firewall, DNS, machine d'administration     | Template de VM sur Proxmox
-| 🐬     | Le déploiement des VM est uniforme et automatisé. La machine de rebond centralisée peut communiquer avec l'entièreté des machines. Une PKI est en place ainsi que le nom de domaine ng-hl.com et une acme    | Gitlab-ce, , Ansible, PKI, certificat wildcard, acme     | Template de VM sur Proxmox avec OpenTofu et Ansible dans une pipeline Gitlab CI/CD 
-| 🐳    | La stack d'observabilité est en place et le dashboard Homepage prêt à l'emploi avec une évolution dynamique.     | Prometheus, Grafana, Homepage, notifications (Discord ?)       | Image préconfigurée sur Proxmox avec OpenTofu et Ansible dans une pipeline Gitlab CI/CD
+| 🐬     | Le déploiement des VM est uniforme et automatisé. La machine de rebond centralisée peut communiquer avec l'entièreté des machines. Le nom de domaine ng-hl.com est en place pour gérer l'exposition des services vers l'extérieur. Un renouvellement automatique du certificat via ACME est également fonctionnel. La stack d'observabilité est en place.   | Gitlab-ce, , Ansible, PKI, certificat wildcard, acme, Prometheus, Grafana, AlertManager     | Template de VM sur Proxmox avec OpenTofu et Ansible dans une pipeline Gitlab CI/CD 
+| 🐳    |  Le dashboard Homepage prêt à l'emploi avec une évolution dynamique. Renforcement de la sécurité avec l'adoption du 0 trust au sein du homelab.     | PKI interne, Homepage, notifications (Discord ?)       | Image préconfigurée sur Proxmox avec OpenTofu et Ansible dans une pipeline Gitlab CI/CD
 
 ---
 
@@ -239,12 +239,15 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
             - [x] Configuration de acme + test de renouvellement forcé
             - [x] Script de déploiement du nouveau certificat (indexé sur la liste des services exposés)
             - [x] Test de bout en bout
+    
     - [ ] Pipeline CI/CD "vm-factory"
 
 ---
 
 ## 6.3. 🐳
 
+- [ ] PKI Interne
+- [ ] Architecture 0 trust sur les flux Prometheus/Grafana/AlertManager
 - [ ] Prometheus
     - [x] Mise en place du serveur prometheus-core
     - [x] Intégration au niveau de la sauvegarde Proxmox VE
