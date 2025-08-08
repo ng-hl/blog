@@ -1,6 +1,6 @@
 ---
 date: '2025-06-07T23:18:48+02:00'
-draft: true
+draft: false
 title: 'Hors Série 1 - Kresus'
 summary: "Homelab - Hors Série 1 - Kresus"
 tags: ["homelab"]

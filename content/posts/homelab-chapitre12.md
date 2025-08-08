@@ -1,6 +1,6 @@
 ---
 date: '2025-07-21T20:39:51+02:00'
-draft: true
+draft: false
 title: 'Chapitre 12 - OpenTofu'
 summary: "Homelab - Chapitre 12 - OpenTofu"
 tags: ["homelab","opentofu"]
