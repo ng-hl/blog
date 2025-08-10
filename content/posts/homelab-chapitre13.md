@@ -312,9 +312,11 @@ Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. 
 
 | OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
 |:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
-| Debian 12.10     | prometheus-core      | 192.168.100.245    | vmbr1 (core)    | 2     | 4096   | 20Gio
+| Debian 12.10     | prometheus-core      | 192.168.100.245    | vmbr1 (core)    | 2     | 4096   | 20Gio + 10Gio
 
 Il faut également penser à activer la sauvegarde automatique de la VM sur Proxmox en l'ajoutant au niveau de la politique de sauvegarde précédemment créée.
+
+> Ajout du second disque de 10Gio sur le lv `/dev/debian12-vg/debian12-var-lv`
 
 ---
 
@@ -374,12 +376,35 @@ security_ssh : Activation de l'authentification par clé -----------------------
 sudo apt install podman -y
 ```
 
+Configuration de `podman` pour que l'espace disque utilisé soit situé au niveau de la partition `/var` et non pas `/home`
+
+```bash
+sudo mkdir -p /var/lib/containers
+sudo chown -R ngobert:ngobert /var/lib/containers
+mkdir -p ~/.config/containers
+```
+
+Création du fichier `~/.config/containers/storage.conf`
+
+```bash
+[storage]
+driver = "overlay"
+runroot = "/var/run/containers/storage"
+graphroot = "/var/lib/containers/storage"
+```
+
+Restart du daemon `podman`
+
+```bash
+sudo systemctl restart podman
+```
+
 Une image prometheus est disponible sur DockerHub. Nous allons utiliser cette image pour héberger notre instance prometheus
 
 Création du volume Docker pour la persistence de la données
 
 ```bash
-podman volume create prometheus-data
+sudo podman volume create prometheus-data
 ```
 
 Création du répertoire /opt/prometheus
@@ -394,7 +419,7 @@ Modification du propriétaire et du groupe sur le répertoire précemment créé
 sudo chown ngobert:ngobert /opt/prometheus
 ```
 
-Création du fichier de configuration /opt/prometheus/prometheus.yml
+Création du fichier de configuration `/opt/prometheus/prometheus.yml`
 
 ```bash
 global:
@@ -412,7 +437,7 @@ alerting:
        - localhost:9093
 
 scrape_configs:
-  - job_name: prometheus
+  - job_name: prometheus-core
     static_configs:
       - targets: ['prometheus-core.homelab:9090']
   - job_name: admin-core
@@ -424,7 +449,7 @@ scrape_configs:
 Exécution du container
 
 ```bash
-podman run -d \
+sudo podman run -d \
     -p 9090:9090 \
     --name prometheus \
     -v /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
@@ -433,7 +458,7 @@ podman run -d \
     --config.file=/etc/prometheus/prometheus.yml
 ```
 
-Modification du fichier de configuration nftables `/etc/nftables.conf` pour autoriser les requêtes sur le port de prometheus `tcp:9090` en provenance de `rps-core`.
+Modification du fichier de configuration nftables `/etc/nftables.conf` pour autoriser les requêtes sur le port de prometheus `tcp:9090` en provenance de `rps-core`. De plus, il faut autoriser le traffic forwardé via l'interface `podman0` qui est le bridge par défaut pour les containers podman
 
 ```bash
 #!/usr/sbin/nft -f
@@ -455,6 +480,8 @@ table inet filter {
   chain forward {
     type filter hook forward priority 0;
     policy drop;
+    iifname "podman0" accept
+    oifname "podman0" accept
   }
 
   chain output {
@@ -619,6 +646,8 @@ Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. 
 
 Il faut également penser à activer la sauvegarde automatique de la VM sur Proxmox en l'ajoutant au niveau de la politique de sauvegarde précédemment créée.
 
+> Ajout du second disque de 10Gio sur le lv `/dev/debian12-vg/debian12-var-lv`
+
 ---
 
 # 2. Configuration de l'OS via Ansible
@@ -677,6 +706,29 @@ ipv6_disable : Désactivation de la prise en charge de l'IPv6 par défaut ------
 sudo apt install podman -y
 ```
 
+Configuration de `podman` pour que l'espace disque utilisé soit situé au niveau de la partition `/var` et non pas `/home`
+
+```bash
+sudo mkdir -p /var/lib/containers
+sudo chown -R ngobert:ngobert /var/lib/containers
+mkdir -p ~/.config/containers
+```
+
+Création du fichier `~/.config/containers/storage.conf`
+
+```bash
+[storage]
+driver = "overlay"
+runroot = "/var/run/containers/storage"
+graphroot = "/var/lib/containers/storage"
+```
+
+Restart du daemon `podman`
+
+```bash
+sudo systemctl restart podman
+```
+
 Une image prometheus est disponible sur DockerHub. Nous allons utiliser cette image pour héberger notre instance prometheus
 
 Création du volume Docker pour la persistence de la données
@@ -700,12 +752,12 @@ sudo chown ngobert:ngobert /opt/grafana
 Création des répertoires nécessaires
 
 ```bash
-mkdir -p /opt/grafana/provisioning
-mkdir -p /opt/grafana/dashboards
+mkdir -p /opt/grafana/provisioning/datasources
+mkdir -p /opt/grafana/provisioning/dashboards
 mkdir -p /opt/grafana/dashboards/node_exporter
 ```
 
-Création du fichier de configuration `/opt/grafana/provisioning/datasources.yml`
+Création du fichier de configuration `/opt/grafana/provisioning/datasources/prometheus_datasources.yml`
 
 ```yml
 apiVersion: 1
@@ -719,10 +771,9 @@ datasources:
 
 ```
 
-Création du fichier de configuration `/opt/grafana/provisioning/dashboards.yml`
+Création du fichier de configuration `/opt/grafana/provisioning/dashboards/dashboards.yml`
 
-```yml
-provisioning/dashboards.yml 
+```yml 
 apiVersion: 1
 
 providers:
@@ -742,17 +793,55 @@ Création du fichier `/opt/grafana/dashboards/node_exporter/node_exporter_full.j
 Exécution du container
 
 ```bash
-podman run -d \
+sudo podman run -d \
   --name grafana \
   -p 3000:3000 \
   -v grafana-data:/var/lib/grafana \
   -v /opt/grafana/provisioning:/etc/grafana/provisioning \
   -v /opt/grafana/dashboards:/var/lib/grafana/dashboards \
+  -e "GF_SERVER_ROOT_URL=https://grafana.ng-hl.com/" \
+  -e "GF_SERVER_SERVE_FROM_SUB_PATH=true" \
   docker.io/grafana/grafana:latest
 ```
 
-> WIP : Ajouter l'entrée DNS `grafana.ng-hl.com`
+Modification du fichier de configuration nftables `/etc/nftables.conf` pour autoriser les requêtes sur le port de Grafana `tcp:3000` en provenance de `rps-core`. De plus, il faut autoriser le traffic forwardé via l'interface `podman0` qui est le bridge par défaut pour les containers podman
 
-> WIP : Ouvrir le flux du serveur grafana vers le rps via nftables
+```bash
+#!/usr/sbin/nft -f
 
-> WIP : Rectification podman rootless
+table inet filter {
+  chain input {
+    type filter hook input priority 0;
+    policy drop;
+    iif lo accept
+    ct state established,related accept
+
+    ip protocol icmp accept
+
+    
+    ip saddr {{ 192.168.100.252, 192.168.100.250, 192.168.100.248 }} iifname "ens19" tcp dport 22 accept
+    ip saddr 192.168.100.242 tcp dport 3000 accept
+  }
+
+  chain forward {
+    type filter hook forward priority 0;
+    policy drop;
+    iifname "podman0" accept
+    oifname "podman0" accept
+  }
+
+  chain output {
+    type filter hook output priority 0;
+    policy accept;
+  }
+}
+```
+
+Vérification de la syntaxe du fichier `/etc/nftables.conf` et restart du daemon `nftables`
+
+```bash
+sudo nft -c -f /etc/nftables.conf
+sudo systemctl restart nftables
+```
+
+Pour se connecter sur l'interface de Grafana on tape cette url `https://grafana.ng-hl.com`. On saisie les credentials par défaut `admin/admin` pour la première connexion. On peut observer que le datasource `Prometheus` est bien fonctionnel et que le dashboard `Node Exporter Full` est accessible.
