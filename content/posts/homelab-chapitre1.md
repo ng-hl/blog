@@ -239,114 +239,153 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
             - [x] Configuration de acme + test de renouvellement forcé
             - [x] Script de déploiement du nouveau certificat (indexé sur la liste des services exposés)
             - [x] Test de bout en bout
-    
     - [ ] Pipeline CI/CD "vm-factory"
 
 ---
 
 ## 6.3. 🐳
 
-- [ ] PKI Interne
-- [ ] Architecture 0 trust sur les flux Prometheus/Grafana/AlertManager
-- [ ] Prometheus
-    - [x] Mise en place du serveur prometheus-core
-    - [x] Intégration au niveau de la sauvegarde Proxmox VE
-    - [x] Configuration de l'OS avec Ansible
-    - [x] Déploiement de Prometheus
-    - [x] Configuration de Prometheus
-    - [ ] Configuration du TLS sur prometheus.ng-hl.com
-        - [x] Connexion SSH en root via la clé SSH `id_acme` 
-        - [ ] Rajout de la target `prometheus-core`
-        - [ ] Rajout de la commande de reload du container pour application
-    - [ ] Ouverture du flux sur pfSense vers prometheus-core
-    - [ ] Intégrer le renouvellement automatique du certificat via acme-core
-    - [ ] Intégration d'un hôte de test
-    - [ ] Création d'un rôle Ansible "prometheus-agent"
-    - [ ] Rédiger une ficher d'exploitation
-- [ ] Grafana
-    - [ ] Mise en place du serveur grafana-core
-    - [ ] Intégration au niveau de la sauvegarde Proxmox VE
-    - [ ] Configuration de l'OS avec Ansible
-    - [ ] Installation de Grafana
-    - [ ] Configuration de Grafana
-    - [ ] Configuration du TLS sur grafana.ng-hl.com
-    - [ ] Ouverture du flux sur pfSense vers grafana-core
-    - [ ] Intégrer le renouvellement automatique du certificat via acme-core
-    - [ ] Intégration de dashboards avec les templates
-    - [ ] Rédiger une ficher d'exploitation
-- [ ] Netbox
-    - [ ] Mise en place du serveur prometheus-core
-    - [ ] Intégration au niveau de la sauvegarde Proxmox VE
-    - [ ] Configuration de l'OS avec Ansible
-    - [ ] Installation de la stack Netbox
-        - [ ] PostgreSQL
-            - [ ] Installation de PostgreSQL
-            - [ ] Création de la DB
-            - [ ] Création de l'utilisation de la DB
-        - [ ] Installation de Redis
-        - [ ] Netbox
-            - [ ] Installation
-            - [ ] Création de l'utilisateur système pour netbox
-            - [ ] Modification de la configuration
-        - [ ] Gunicorn
-            - [ ] Installation
-            - [ ] Configuration
-        - [ ] uWSGI
-            - [ ] Installation
-            - [ ] Configuration
-        - [ ] nginx
-            - [ ] Installation
-            - [ ] Configuration
-            - [ ] Mise en place du TLS
-    - [ ] Rédiger une fiche d'exploitation
-    - [ ] Intégrer l'existant
-        - [ ] IPAM
-        - [ ] Virtualisation
-    - [ ] Rédiger une fiche d'exploitation
-- [ ] Gitlab CI/CD "vm-factory"
-    - [ ] Lien avec Prometheus
-    - [ ] Lien avec Grafana
-    - [ ] Lien avec NetBox
-    - [ ] Lien avec Homepage
-    - [ ] Rédiger une ficher d'exploitation
-- [ ] Homepage
-    - [ ] Mise en place du serveur homepage-core
-    - [ ] Intégration au niveau de la sauvegarde Proxmox VE
-    - [ ] Configuration de l'OS avec Ansible
-    - [ ] Création du volume Docker
-    - [ ] Déploiement via docker-compose
-    - [ ] Mise en place du TLS
-    - [ ] Exposition via homepage.ng-hl.com
-    - [ ] Evolution dynamique avec la CI/CD "vm-factory"
-- [ ] ELK
-    - [ ] Mise en place du serveur elk-core
-    - [ ] Intégration au niveau de la sauvegarde Proxmox VE
-    - [ ] Configuration de l'OS avec Ansible
-    - [ ] Installation de ELK
-        - [ ] Elastic Search
-            - [ ] Installation
-            - [ ] Configuration
-            - [ ] Mise en place du TLS : elastic.ng-hl.com
-            - [ ] Ficher d'exploitation
-        - [ ] Kibana
-            - [ ] Installation
-            - [ ] Configuration
-            - [ ] Mise en place du TLS kibana.ng-hl.com
-            - [ ] Fiche d'exploitation
-        - [ ] Logstash
-            - [ ] Installation
-            - [ ] Configuration
-            - [ ] Installation de Filebeat
-            - [ ] Configuration de Filebeat
-            - [ ] Mise en place du TLS kibana.ng-hl.com
-            - [ ] Fiche d'exploitation
+[ ] Niveau 3
+    - [ ] Stack d'observabilité Prometheus / Grafana / AlertManager
+        - [ ] Ajout des entrées DNS
+            - [x] reverseproxysup-core.homelab rps-core.homelab (CNAME) supervision-core.homelab (CNAME)
+            - [x] prometheus-core.homelab
+            - [x] grafan-core.homelab
+            - [ ] alertmanager-core.homelab am-core.homelab (CNAME)
+            - [ ] supervision.ng-hl.com prometheus.ng-hl.com (CNAME) grafana.ng-hl.com (CNAME) alertmanager.ng-hl.com (CNAME)
+        - [ ] Rôle de déploiement Ansible reverse-proxy-sup
+            - [ ] ...
+            - [ ] ...
+        - [ ] Reverse Proxy Sup (rps)
+            - [x] Mise en place du serveur prometheus-core
+            - [x] Intégration au niveau de la sauvegarde Proxmox VE
+            - [x] Configuration de l'OS avec Ansible
+            - [x] nginx
+                - [x] Installation et configuration
+                - [x] Lier avec acme-deploy.sh depuis acme-core
+                    - [x] Connexion SSH en root via la clé SSH `id_acme` 
+                    - [x] Rajout de la target `rps-core`
+                    - [x] Rajout de la commande de reload du daemon nginx
+                - [x] Déployer le certificat et la privkey du certificat wildcard
+                - [x] Tester un renouvellement
+                - [x] Créer les vHosts
+                    - [x] supervision.conf
+                        - [x] Configuration du TLS avec le certificat wildcard
+                    - [x] prometheus.conf
+                    - [x] grafana.conf
+                    - [ ] alertmanager.conf
+                - [x] Ouvrir les flux via nftables
+                - [x] Ouvrir le flux depuis l'extérieur via pfSense
+        - [ ] Prometheus
+            - [x] Mise en place du serveur prometheus-core
+            - [x] Intégration au niveau de la sauvegarde Proxmox VE
+            - [x] Configuration de l'OS avec Ansible
+            - [x] Podman
+                - [x] Installation et configuration
+                - [x] Création du volume prometheus-data
+                - [x] Déploiement de Prometheus 
+                    - [x] Prise en compte de la configuration de Prometheus
+            - [x] Mise à jour de la configuration nftables (accès port 9090 et forwarder sur podman0)
+            - [x] Test de la persistence de la données
+            - [x] Validation du dashboard Node Exporter
+            - [x] Intégration d'un hôte de test
+            - [ ] Création d'un rôle Ansible "prometheus-agent"
+            - [ ] Rédiger une fiche d'exploitation
+        - [ ] Grafana
+            - [x] Mise en place du serveur grafana-core
+            - [x] Intégration au niveau de la sauvegarde Proxmox VE
+            - [x] Configuration de l'OS avec Ansible
+            - [x] Podman
+                - [x] Installation et configuration
+                - [x] Création du volume grafana-data
+                - [x] Déploiement de Grafana 
+                    - [x] Prise en compte de la datasource Prometheus
+                    - [x] Prise en compte du dashboard Node Exporter
+            - [x] Mise à jour de la configuration nftables (accès port 3000 et forwarder sur podman0)
+            - [x] Test de la persistence de la données
+            - [x] Validation du dashboard Node Exporter
+            - [ ] Rédiger une ficher d'exploitation
+    - [ ] PKI Interne
+    - [ ] Netbox
+        - [ ] Mise en place du serveur netbox-core
+        - [ ] Intégration au niveau de la sauvegarde Proxmox VE
+        - [ ] Configuration de l'OS avec Ansible
+        - [ ] Installation de la stack Netbox
+            - [ ] PostgreSQL
+                - [ ] Installation de PostgreSQL
+                - [ ] Création de la DB
+                - [ ] Création de l'utilisation de la DB
+            - [ ] Installation de Redis
+            - [ ] Netbox
+                - [ ] Installation
+                - [ ] Création de l'utilisateur système pour netbox
+                - [ ] Modification de la configuration
+            - [ ] Gunicorn
+                - [ ] Installation
+                - [ ] Configuration
+            - [ ] uWSGI
+                - [ ] Installation
+                - [ ] Configuration
+            - [ ] nginx
+                - [ ] Installation
+                - [ ] Configuration
+                - [ ] Mise en place du TLS
+        - [ ] Rédiger une fiche d'exploitation
+        - [ ] Intégrer l'existant
+            - [ ] IPAM
+            - [ ] Virtualisation
+        - [ ] Rédiger une fiche d'exploitation
+    - [ ] Gitlab CI/CD "vm-factory"
+        - [ ] Lien avec Prometheus
+        - [ ] Lien avec Grafana
+        - [ ] Lien avec NetBox
+        - [ ] Lien avec Homepage
+        - [ ] Rédiger une fiche d'exploitation
+    - [ ] Homepage
+        - [ ] Mise en place du serveur homepage-core
+        - [ ] Intégration au niveau de la sauvegarde Proxmox VE
+        - [ ] Configuration de l'OS avec Ansible
+        - [ ] Création du volume Docker
+        - [ ] Déploiement via docker-compose
+        - [ ] Mise en place du TLS
+        - [ ] Exposition via homepage.ng-hl.com
+        - [ ] Evolution dynamique avec la CI/CD "vm-factory"
+    - [ ] ELK
+        - [ ] Mise en place du serveur elk-core
+        - [ ] Intégration au niveau de la sauvegarde Proxmox VE
+        - [ ] Configuration de l'OS avec Ansible
+        - [ ] Installation de ELK
+            - [ ] Elastic Search
+                - [ ] Installation
+                - [ ] Configuration
+                - [ ] Mise en place du TLS : elastic.ng-hl.com
+                - [ ] Ficher d'exploitation
+            - [ ] Kibana
+                - [ ] Installation
+                - [ ] Configuration
+                - [ ] Mise en place du TLS kibana.ng-hl.com
+                - [ ] Fiche d'exploitation
+            - [ ] Logstash
+                - [ ] Installation
+                - [ ] Configuration
+                - [ ] Installation de Filebeat
+                - [ ] Configuration de Filebeat
+                - [ ] Mise en place du TLS kibana.ng-hl.com
+                - [ ] Fiche d'exploitation
     - [ ] Consul
     - [ ] Wazuh
     - [ ] Infrastructure secondaire sous K8s
 
 ---
 
-## 6.4. Projets annexes
+# 6.4. Level 4 (WIP)
+
+- [ ] Architecture 0 trust
+    - [ ] Flux de la stack d'observabilité
+
+---
+
+## 6.5. Projets annexes
 
 - [ ] Projet - Agents IA
     - [ ] Équipe de développement d'agents IA

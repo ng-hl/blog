@@ -628,9 +628,181 @@ admin-core.homelab [192.168.100.252] 9100 (?) open
 
 # 6. Ajout des métriques Prometheus pour tous les serveurs (Ansible)
 
+> Nous allons créer un playbook Ansible `01_prometheus_node_exporter` pour installer et configurer `Node Exporter` grâce au rôle `node_exporter`. Ainsi, nous allons pouvoir déployer node exporter et la configuration nécessaires sur les serveurs existants. Ce playbook sera également utilisé pour les futurs serveurs également.
 
+Création du playbook `01_prometheus_node_exporter`
 
+```yml
 ---
+- name: Déploiement de Node Exporter
+  hosts: prometheus_clients
+  become: true
+  roles:
+    - node_exporter
+```
+
+Création du rôle `node_exporter`
+
+```bash
+ansible-galaxy init roles/node_exporter
+```
+
+Contenu du fichier `/defaults/main.yml`
+
+```yml
+# SPDX-License-Identifier: MIT-0
+---
+# defaults file for roles/node_exporter
+
+node_exporter_version: "1.6.1"
+node_exporter_user: "node_exporter"
+node_exporter_bin_path: "/usr/local/bin/node_exporter"
+node_exporter_port: 9100
+node_exporter_listen_address: "{{ ip }}"
+```
+
+> Nous utilisons la host_var `ip` définie au niveau du fichier d'inventaire qui représente l'IP utilisée en interne, au sein du homelab. C'est important d'écouter uniquement sur cette interface car certains serveurs peuvent avoir des interfaces en bridge directement accessible depuis mon réseau local. Nous voulons éviter que le scraping des données soit accessible à l'extérieur du homelab.
+
+Contenu du fichier `/tasks/main.yml`
+
+```yml
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/node_exporter
+
+- name: Création de l'utilisateur node_exporter
+  ansible.builtin.user:
+    name: "{{ node_exporter_user }}"
+    shell: /usr/sbin/nologin
+    system: true
+    create_home: false
+
+- name: Téléchargement de Node Exporter
+  ansible.builtin.get_url:
+    url: >-
+      https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gzlinux-amd64.tar.gz"
+    dest: "/tmp/node_exporter-{{ node_exporter_version }}.tar.gz"
+    mode: '0644'
+
+- name: Décompression de Node Exporter
+  ansible.builtin.unarchive:
+    src: "/tmp/node_exporter-{{ node_exporter_version }}.tar.gz"
+    dest: /tmp
+    remote_src: true
+
+- name: Copie du binaire dans /usr/local/bin
+  ansible.builtin.copy:
+    src: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
+    dest: "{{ node_exporter_bin_path }}"
+    mode: '0755'
+    owner: root
+    group: root
+    remote_src: true
+
+- name: Création du service systemd
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/node_exporter.service
+    content: |
+      [Unit]
+      Description=Node Exporter
+      After=network.target
+
+      [Service]
+      User={{ node_exporter_user }}
+      ExecStart={{ node_exporter_bin_path }} --web.listen-address={{ node_exporter_listen_address }}:{{ node_exporter_port }}
+
+      [Install]
+      WantedBy=default.target
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart node_exporter
+
+- name: Activation et démarrage le service
+  ansible.builtin.systemd:
+    name: node_exporter
+    enabled: true
+    state: started
+
+```
+
+Contenu du fichier `/handlers/main.yml`
+
+```yml
+# SPDX-License-Identifier: MIT-0
+---
+# handlers file for roles/node_exporter
+
+- name: Restart node_exporter
+  ansible.builtin.systemd:
+    name: node_exporter
+    state: restarted
+
+```
+
+Rajout du group `prometheus` au niveau du fichier d'inventaire `/envs/100-core/00_inventory.yml`
+
+```yml
+prometheus_clients:
+  hosts:
+    dns-core.homelab:
+    admin-core.homelab:
+    ansible-core.homelab:
+    vaultwarden-core.homelab:
+    gitlab-core.homelab:
+    prometheus-core.homelab:
+    grafana-core.homelab:
+    rps-core.homelab:
+```
+
+Application du linter `ansible-lint` sur le playbook `01_prometheus_node_exporter.yml`
+
+```bash
+ansible-lint playbooks/01_prometheus_node_exporter.yml 
+Passed: 0 failure(s), 0 warning(s) on 6 files
+```
+
+Exécution sur un serveur spécifique. Penser à faire un snapshot avant l'exécution du playbook
+
+```bash
+ansible-playbook playbooks/01_prometheus_node_exporter.yml -l "dns-core.homelab"
+```
+
+Mise à jour du fichier de configuration `/opt/prometheus/prometheus.yml` sur le serveur `prometheus-core`
+
+```yml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first.rules"
+  # - "second.rules"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - localhost:9093
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus-core.homelab:9090']
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets:
+          - admin-core.homelab:9100
+          - dns-core.homelab:9100
+          - ansible-core.homelab:9100
+          - acme-core.homelab:9100
+          - vaultwarden-core.homelab:9100
+          - gitlab-core.homelab:9100
+          - grafana-core.homelab:9100
+          - rps-core.homelab:9100
+
+```
 
 ---
 
