@@ -245,7 +245,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 
 ## 6.3. 🐳
 
-[ ] Niveau 3
+- [ ] Niveau 3
     - [ ] Stack d'observabilité Prometheus / Grafana / AlertManager
         - [ ] Ajout des entrées DNS
             - [x] reverseproxysup-core.homelab rps-core.homelab (CNAME) supervision-core.homelab (CNAME)
