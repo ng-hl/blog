@@ -289,7 +289,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
             - [x] Test de la persistence de la données
             - [x] Validation du dashboard Node Exporter
             - [x] Intégration d'un hôte de test
-            - [ ] Création d'un rôle Ansible "prometheus-agent"
+            - [x] Création d'un rôle Ansible "prometheus-clients"
             - [ ] Rédiger une fiche d'exploitation
         - [ ] Grafana
             - [x] Mise en place du serveur grafana-core
@@ -305,6 +305,14 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
             - [x] Test de la persistence de la données
             - [x] Validation du dashboard Node Exporter
             - [ ] Rédiger une ficher d'exploitation
+        - [ ] AlertManager
+            - [ ] Mise en place du serveur alertmanager-core
+            - [ ] Intégration au niveau de la sauvegarde Proxmox VE
+            - [ ] Configuration de l'OS avec Ansible
+            - [ ] Podman
+                - [ ] Installation et configuration
+                - [ ] Création du volume alertmanager-data
+                - [ ] Déploiement de AlertManager 
     - [ ] PKI Interne
     - [ ] Netbox
         - [ ] Mise en place du serveur netbox-core
@@ -380,6 +388,8 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 
 # 6.4. Level 4 (WIP)
 
+- [ ] Chantier d'uniformisation de nftables
+- [ ] Chantier de gestion de la totalité de la configuration via Ansible pour coller au principe de l'IaC
 - [ ] Architecture 0 trust
     - [ ] Flux de la stack d'observabilité
 
@@ -416,5 +426,6 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 | prometheus-core.homelab | 192.168.100.245 | Debian 12.10 | prometheus-core.ng-hl.com prometheus.ng-hl.com (CNAME)
 | grafana-core.homelab | 192.168.100.244 | Debian 12.10 | grafana-core.ng-hl.com grafana.ng-hl.com (CNAME)
 | reverseproxysup-core.homelab rps-core.homelab (CNAME) | 192.168.100.242 | Debian 12.10 | supervision-core.ng-hl.com supervision.ng-hl.com (CNAME)
+| mail-core.homelab | 192.168.100.241 | Debian 12.10 |
 | ansibledev-core.homelab | 192.168.100.11 | Debian 12.10 |
 | debian12-template-core.homelab | 192.168.100.10 | Debian 12.10 |

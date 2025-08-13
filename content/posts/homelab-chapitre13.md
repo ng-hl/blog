@@ -423,40 +423,53 @@ Création du fichier de configuration `/opt/prometheus/prometheus.yml`
 
 ```bash
 global:
-  scrape_interval:     15s
+  scrape_interval: 15s
   evaluation_interval: 15s
 
 rule_files:
-  # - "first.rules"
-  # - "second.rules"
+  - "/etc/prometheus/rules/*.yml"
 
 alerting:
   alertmanagers:
-  - static_configs:
-    - targets:
-       - localhost:9093
+    - static_configs:
+        - targets:
+            - alertmanager-core.homelab:9093
 
 scrape_configs:
-  - job_name: prometheus-core
+  - job_name: 'prometheus'
     static_configs:
       - targets: ['prometheus-core.homelab:9090']
-  - job_name: admin-core
+
+  - job_name: 'node_exporter'
     static_configs:
-      - targets: ['admin-core.homelab:9090']
+      - targets:
+          - admin-core.homelab:9100
+          - dns-core.homelab:9100
+          - ansible-core.homelab:9100
+          - acme-core.homelab:9100
+          - vaultwarden-core.homelab:9100
+          - gitlab-core.homelab:9100
+          - grafana-core.homelab:9100
+          - alertmanager-core.homelab:9100
+          - rps-core.homelab:9100
 ```
 
+> La partie alerting en `localhost` est à remplacer par `alertmanager-core.homelab:9093` lorsque Alertmanager est en place. A voir plus bas dans le document.
 
 Exécution du container
 
 ```bash
 sudo podman run -d \
-    -p 9090:9090 \
-    --name prometheus \
-    -v /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
-    -v prometheus-data:/prometheus \
-    docker.io/prom/prometheus \
-    --config.file=/etc/prometheus/prometheus.yml
+  -p 9090:9090 \
+  --name prometheus \
+  -v /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
+  -v /opt/prometheus/rules:/etc/prometheus/rules \
+  -v prometheus-data:/prometheus \
+  docker.io/prom/prometheus \
+  --config.file=/etc/prometheus/prometheus.yml
 ```
+
+> L'option `-v /opt/prometheus/rules:/etc/prometheus/rules` est à ajouter lorsque Alertmanager est en place. A voir plus bas dans le document.
 
 Modification du fichier de configuration nftables `/etc/nftables.conf` pour autoriser les requêtes sur le port de prometheus `tcp:9090` en provenance de `rps-core`. De plus, il faut autoriser le traffic forwardé via l'interface `podman0` qui est le bridge par défaut pour les containers podman
 
@@ -783,7 +796,7 @@ alerting:
   alertmanagers:
     - static_configs:
         - targets:
-            - localhost:9093
+            - alertmanager-core.homelab:9093
 
 scrape_configs:
   - job_name: 'prometheus'
@@ -906,7 +919,7 @@ Une image prometheus est disponible sur DockerHub. Nous allons utiliser cette im
 Création du volume Docker pour la persistence de la données
 
 ```bash
-podman volume create grafana-data
+sudo podman volume create grafana-data
 ```
 
 Création du répertoire `/opt/grafana`
@@ -1017,3 +1030,220 @@ sudo systemctl restart nftables
 ```
 
 Pour se connecter sur l'interface de Grafana on tape cette url `https://grafana.ng-hl.com`. On saisie les credentials par défaut `admin/admin` pour la première connexion. On peut observer que le datasource `Prometheus` est bien fonctionnel et que le dashboard `Node Exporter Full` est accessible.
+
+---
+
+> Cette section couvre la partie `AlertManager`
+
+# 1. Création de la VM
+
+Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on crée un clone complet à partir de ce template. Voici les caractéristiques de la VM :
+
+| OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
+|:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
+| Debian 12.10     | alertmanager-core am-core (CNAME)     | 192.168.100.243    | vmbr1 (core)    | 1     | 2048   | 20Gio
+
+Il faut également penser à activer la sauvegarde automatique de la VM sur Proxmox en l'ajoutant au niveau de la politique de sauvegarde précédemment créée.
+
+---
+
+# 2. Configuration de l'OS via Ansible
+
+> Les informations concernant Ansible sont disponibles au niveau des chapitres 7 et 8.
+
+A présent, le playbook et les rôles ayant pour objectif d'appliquer la configuration de base de l'OS sont disponibles. Il faut se connecter en tant que l'utilisateur `ansible` sur le serveur `ansible-core.homelab` puis ajouter l'hôte `am-core.homelab` au niveau du fichier d'inventaire `/opt/ansible/envs/100-core/00_inventory.yml` avec les éléments suivants
+
+```yml
+am-core.homelab:
+    ip: 192.168.100.243
+    hostname: am-core
+```
+
+Pour exécuter le playbook, il faut lancer la commande suivante
+
+```bash
+ansible-playbook -i envs/100-core/00_inventory.yml -l 'alertmanager-core.homelab,' playbooks/00_config_vm.yml
+```
+
+Voici le récapitulatif
+
+```bash
+TASKS RECAP **********************************************************************************************************************
+mardi 12 août 2025  12:14:58 +0200 (0:00:00.259)       0:00:14.391 ************ 
+=============================================================================== 
+base_packages : Installation des paquets de base -------------------------------------------------------------------------- 3.78s
+dns_config : Installation du paquet systemd-resolved ---------------------------------------------------------------------- 1.99s
+base_packages : Mise à jour du cache apt ---------------------------------------------------------------------------------- 1.85s
+Gathering Facts ----------------------------------------------------------------------------------------------------------- 1.05s
+nftables : Activer et démarrer le service nftables ------------------------------------------------------------------------ 0.63s
+dns_config : Autoremove et purge ------------------------------------------------------------------------------------------ 0.60s
+motd : Déploiement du motd ------------------------------------------------------------------------------------------------ 0.46s
+hostname_config : Modification du hostname -------------------------------------------------------------------------------- 0.44s
+dns_config : Enable du daemon systemd-resolved ---------------------------------------------------------------------------- 0.39s
+dns_config : Suppression du paquet resolvconf ----------------------------------------------------------------------------- 0.33s
+nftables : Déploiement de la configuration de nftables -------------------------------------------------------------------- 0.31s
+dns_config : Resart du daemon systemd-resolved ---------------------------------------------------------------------------- 0.30s
+security_ssh : Restart du daemon sshd ------------------------------------------------------------------------------------- 0.26s
+nftables : Valider la configuration nftables ------------------------------------------------------------------------------ 0.24s
+hostname_config : Modification du fichier /etc/hosts ---------------------------------------------------------------------- 0.21s
+ipv6_disable : Désactivation de la prise en charge de l'IPv6 globalement -------------------------------------------------- 0.20s
+dns_config : Configuration du DNS dans /etc/resolved.conf ----------------------------------------------------------------- 0.20s
+dns_config : Suppression du fichier /etc/resolv.conf ---------------------------------------------------------------------- 0.19s
+ipv6_disable : Désactivation de la prise en charge de l'IPv6 par défaut --------------------------------------------------- 0.14s
+dns_config : Création du nouveau lien symbolique vers /etc/resolv.conf ---------------------------------------------------- 0.14s
+```
+
+Exécution du playbook d'installation de `node_exporter`
+
+```bash
+Pour exécuter le playbook, il faut lancer la commande suivante
+
+```bash
+ansible-playbook -i envs/100-core/00_inventory.yml -l 'alertmanager-core.homelab,' playbooks/01_prometheus_node_exporter.yml
+```
+
+Voici le récapitulatif
+
+```bash
+TASKS RECAP **********************************************************************************************************************
+mardi 12 août 2025  12:19:30 +0200 (0:00:00.460)       0:00:04.472 ************ 
+=============================================================================== 
+Gathering Facts ----------------------------------------------------------------------------------------------------------- 1.02s
+node_exporter : Décompression de Node Exporter ---------------------------------------------------------------------------- 0.83s
+node_exporter : Téléchargement de Node Exporter --------------------------------------------------------------------------- 0.67s
+node_exporter : Activation et démarrage le service ------------------------------------------------------------------------ 0.62s
+node_exporter : Restart node_exporter ------------------------------------------------------------------------------------- 0.46s
+node_exporter : Copie du binaire dans /usr/local/bin ---------------------------------------------------------------------- 0.31s
+node_exporter : Création du service systemd ------------------------------------------------------------------------------- 0.29s
+node_exporter : Création de l'utilisateur node_exporter ------------------------------------------------------------------- 0.26s
+```
+
+> Il faut mettre à jour le fichier de configuration `/opt/prometheus/prometheus.yml` sur `prometheus-core` et relancer le container `prometheus`.
+
+---
+
+# 3. Installation et configuration de AlertManager
+
+> Tout comme Prometheus et Grafana, la solution AlertManager va être déployée en container. Avant de procéder aux opérations ci-dessous, il est nécessaire d'installation `podman` sur le serveur. Nous n'utilisons pas `docker` par soucis de compatibilité avec `nftables`.
+
+```bash
+sudo apt install podman -y
+```
+
+Configuration de `podman` pour que l'espace disque utilisé soit situé au niveau de la partition `/var` et non pas `/home`
+
+```bash
+sudo mkdir -p /var/lib/containers
+sudo chown -R ngobert:ngobert /var/lib/containers
+mkdir -p ~/.config/containers
+```
+
+Création du fichier `~/.config/containers/storage.conf`
+
+```bash
+[storage]
+driver = "overlay"
+runroot = "/var/run/containers/storage"
+graphroot = "/var/lib/containers/storage"
+```
+
+Restart du daemon `podman`
+
+```bash
+sudo systemctl restart podman
+```
+
+Création du volume pour la persistence des données
+
+```bash
+sudo podman volume create am-data
+```
+
+Création de la structure des répertoires
+
+```bash
+sudo mkdir -p /opt/alertmanager/{config,data}
+sudo chown -R ngobert:ngobert /opt/alertmanager
+```
+
+Création du fichier `/opt/alertmanager/config/alertmanager.yml`
+
+```yml
+global:
+  smtp_smarthost: 'smtp01-core.homelab:587'
+  smtp_from: 'alertmanager@ng-hl.com'
+  smtp_auth_username: '<username>'
+  smtp_auth_password: '<password>'
+
+route:
+  receiver: 'email-alerts'
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+receivers:
+  - name: 'email-alerts'
+    email_configs:
+      - to: '<mail>'
+
+```
+
+Exécution du container
+
+```bash
+sudo podman run -d \
+  --name alertmanager \
+  -p 9093:9093 \
+  -v am-data:/alertmanager \
+  -v /opt/alertmanager/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml \
+  docker.io/prom/alertmanager:latest \
+  --config.file=/etc/alertmanager/alertmanager.yml \
+  --storage.path=/alertmanager \
+  --web.listen-address=0.0.0.0:9093
+```
+
+Création du fichier vhost `/etc/nginx/sites-available` sur `rps-core`
+
+```bash
+server {
+    listen 80;
+    server_name alertmanager.ng-hl.fr am.ng-hl.fr;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name alertmanager.ng-hl.fr am.ng-hl.fr;
+
+    ssl_certificate     /etc/ssl/certs/wildcard.ng-hl.com/fullchain.cer;
+    ssl_certificate_key /etc/ssl/certs/wildcard.ng-hl.com/privkey.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    
+    access_log /var/log/nginx/alertmanager.access.log;
+    error_log  /var/log/nginx/alertmanager.error.log;
+
+    location / {
+        proxy_pass         http://alertmanager-core.homelab:9093/;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_read_timeout  90;
+        proxy_http_version  1.1;
+        proxy_set_header    Upgrade $http_upgrade;
+        proxy_set_header    Connection "upgrade";
+    }
+}
+```
+
+On peut se rendre sur `https://alertmanager.ng-hl.com` pour accéder à l'interface web de AlertManager et visualiser les alertes en cours.
+
+---
+
+# 4. Ajout de l'alerting par mail
+
+> Cette section dépend du `Chapitre 14 - SMTP` qui traite de l'installation et de la configuration du serveur de mail `mail-core.homelab`.
+
+...
