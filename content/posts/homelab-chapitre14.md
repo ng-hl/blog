@@ -87,14 +87,17 @@ Voici le contenu du fichier `tasks/main.yml`
     mode: '0644'
   notify: Redémarrer Postfix
 
-- name: Déploiement de la configuration master.cf
-  ansible.builtin.template:
-    src: master.cf.j2
-    dest: /etc/postfix/master.cf
+- name: Application des permissions sur les fichiers sasl_passwd et le hash
+  ansible.builtin.file:
+    path: "{{ item }}"
     owner: root
     group: root
-    mode: '0644'
-  notify: Redémarrer Postfix
+    mode: '0600'
+  loop:
+    - /etc/postfix/sasl_passwd
+    - /etc/postfix/sasl_passwd.db
+  notify:
+    - Redémarrer Postfix
 
 - name: Déploiement de la configuration rsyslog
   ansible.builtin.template:
@@ -133,7 +136,6 @@ serveur_mail_postfix_relayhost: "[smtp.gmail.com]:587"
 serveur_mail_postfix_relay_user: "<compte_gmail>"
 serveur_mail_postfix_relay_password: "<password>"
 
-
 ```
 
 Voici le contenu du fichier `handlers/main.yml`
@@ -158,31 +160,47 @@ Voici le contenu du fichier `handlers/main.yml`
 Voici le contenu du fichier `templates/main.cf.j2`
 
 ```j2
-myhostname = {{ serveur_mail_postfix_myhostname }}
-mydomain = {{ serveur_mail_postfix_mydomain }}
-myorigin = $mydomain
-inet_interfaces = all
-inet_protocols = all
-mydestination = $myhostname, localhost.$mydomain, localhost
-mynetworks = {{ serveur_mail_postfix_mynetworks }}
-relayhost = {{ serveur_mail_postfix_relayhost }}
+# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+
+smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
+biff = no
+append_dot_mydomain = no
+readme_directory = no
+compatibility_level = 3.6
+
+# TLS parameters
 smtp_use_tls = yes
+smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+smtpd_tls_security_level=may
+
+smtp_tls_CApath=/etc/ssl/certs
+smtp_tls_security_level=may
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+# SASL
 smtp_sasl_auth_enable = yes
 smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 smtp_sasl_security_options = noanonymous
-smtp_sasl_tls_security_options = noanonymous
-smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 
-```
+# Host & domain
+myhostname = {{ serveur_mail_postfix_myhostname }}
+mydomain = {{ serveur_mail_postfix_mydomain }}
+myorigin = $mydomain
+mydestination = $myhostname, {{ serveur_mail_postfix_mydomain }}, localhost.$mydomain, localhost
+relayhost = {{ serveur_mail_postfix_relayhost }}
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 {{ serveur_mail_postfix_mynetworks }}
 
-Voici le contenu du fichier `templates/master.cf.j2`
+# Mailbox & protocol
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = loopback-only
+inet_protocols = all
 
-```j2
-smtp      inet  n       -       y       -       -       smtpd
-  -o smtpd_relay_restrictions=permit_mynetworks,reject_unauth_destination
-  -o mynetworks={{ serveur_mail_postfix_mynetworks }}
-  -o smtpd_tls_security_level=may
-  -o smtpd_sasl_auth_enable=no
+# Aliases
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+
 ```
 
 Voici le contenu du fichier `rsyslog.d_postfix.conf.j2`
@@ -255,3 +273,10 @@ Envoi d'un mail de test vers l'extérieur
 ```bash
 echo "Test depuis mail-core" | mail -s "Test mail" <adresse_mail>
 ```
+
+On peut vérifier les logs du daemon `postfix` au niveau de ce fichier `/var/log/mail.log`
+
+---
+
+# 5. Configuration de l'envoi de mail d'alertes vers l'extérieur
+

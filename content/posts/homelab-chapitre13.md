@@ -454,7 +454,50 @@ scrape_configs:
           - rps-core.homelab:9100
 ```
 
-> La partie alerting en `localhost` est à remplacer par `alertmanager-core.homelab:9093` lorsque Alertmanager est en place. A voir plus bas dans le document.
+Création du fichier `/etc/prometheus/rules/node_exporter_alerts.yml`
+
+```yml
+groups:
+  - name: node_exporter_rules
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} is not responding for more than 1 minute."
+
+      - alert: HighCPULoad
+        expr: 100 - (avg by(instance)(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU load on {{ $labels.instance }}"
+          description: "CPU load is > 90% for more than 5 minutes."
+
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Less than 10% disk space left."
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 90%."
+```
+
+> La partie alerting `alertmanager-core.homelab:9093` est appliquée lorsque Alertmanager est en place. A voir plus bas dans le document.
 
 Exécution du container
 
@@ -1245,5 +1288,3 @@ On peut se rendre sur `https://alertmanager.ng-hl.com` pour accéder à l'interf
 # 4. Ajout de l'alerting par mail
 
 > Cette section dépend du `Chapitre 14 - SMTP` qui traite de l'installation et de la configuration du serveur de mail `mail-core.homelab`.
-
-...
