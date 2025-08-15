@@ -17,7 +17,7 @@ Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. 
 
 | OS      | Hostname     | Adresse IP | Interface réseau | vCPU    | RAM   | Stockage
 |:-:    |:-:    |:-:    |:-:    |:-:    |:-:    |:-:
-| Debian 12.10     | gitlab-core      | 192.168.100.247    | vmbr1 (core)    | 2     | 4096   | 20Gio
+| Debian 12.10     | gitlab-core      | 192.168.100.247    | vmbr1 (core)    | 2     | 8192   | 20Gio
 
 Il faut également penser à activer la sauvegarde automatique de la VM sur Proxmox en l'ajoutant au niveau de la politique de sauvegarde précédemment créée.
 

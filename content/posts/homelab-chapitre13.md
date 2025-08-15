@@ -2,8 +2,8 @@
 date: '2025-07-31T21:56:48+02:00'
 draft: false
 title: 'Chapitre 13 - Prometheus'
-summary: "Homelab - Chapitre 13 - Prometheus/Grafana"
-tags: ["homelab","prometheus","grafana"]
+summary: "Homelab - Chapitre 13 - Prometheus/Grafana/Alertmanager"
+tags: ["homelab","prometheus","grafana","alertmanager"]
 categories: ["homelab"]
 ---
 
@@ -318,6 +318,7 @@ Il faut également penser à activer la sauvegarde automatique de la VM sur Prox
 
 > Ajout du second disque de 10Gio sur le lv `/dev/debian12-vg/debian12-var-lv`
 
+
 ---
 
 # 2. Configuration de l'OS via Ansible
@@ -330,6 +331,12 @@ A présent, le playbook et les rôles ayant pour objectif d'appliquer la configu
 prometheus-core.homelab:
     ip: 192.168.100.245
     hostname: prometheus-core
+```
+
+Il est nécessaire d'ajouter les droits sudo sur l'utilisateur `ansible` au niveau du fichier `/etc/sudoers.d/ansible` avec les éléments ci-dessous. Il s'agit d'un oubli au niveau du template. (À corriger plus tard).
+
+```bash
+ansible ALL=(ALL) NOPASSWD: ALL
 ```
 
 Pour exécuter le playbook, il faut lancer la commande suivante
@@ -423,96 +430,40 @@ Création du fichier de configuration `/opt/prometheus/prometheus.yml`
 
 ```bash
 global:
-  scrape_interval: 15s
+  scrape_interval:     15s
   evaluation_interval: 15s
 
 rule_files:
-  - "/etc/prometheus/rules/*.yml"
+  # - "first.rules"
+  # - "second.rules"
 
 alerting:
   alertmanagers:
-    - static_configs:
-        - targets:
-            - alertmanager-core.homelab:9093
+  - static_configs:
+    - targets:
+       - localhost:9093
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: prometheus-core
     static_configs:
       - targets: ['prometheus-core.homelab:9090']
-
-  - job_name: 'node_exporter'
+  - job_name: admin-core
     static_configs:
-      - targets:
-          - admin-core.homelab:9100
-          - dns-core.homelab:9100
-          - ansible-core.homelab:9100
-          - acme-core.homelab:9100
-          - vaultwarden-core.homelab:9100
-          - gitlab-core.homelab:9100
-          - grafana-core.homelab:9100
-          - alertmanager-core.homelab:9100
-          - rps-core.homelab:9100
+      - targets: ['admin-core.homelab:9090']
 ```
 
-Création du fichier `/etc/prometheus/rules/node_exporter_alerts.yml`
-
-```yml
-groups:
-  - name: node_exporter_rules
-    rules:
-      - alert: InstanceDown
-        expr: up == 0
-        for: 1m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Instance {{ $labels.instance }} down"
-          description: "{{ $labels.instance }} is not responding for more than 1 minute."
-
-      - alert: HighCPULoad
-        expr: 100 - (avg by(instance)(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High CPU load on {{ $labels.instance }}"
-          description: "CPU load is > 90% for more than 5 minutes."
-
-      - alert: LowDiskSpace
-        expr: (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"}) * 100 < 10
-        for: 5m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Low disk space on {{ $labels.instance }}"
-          description: "Less than 10% disk space left."
-
-      - alert: HighMemoryUsage
-        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 90
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High memory usage on {{ $labels.instance }}"
-          description: "Memory usage is above 90%."
-```
-
-> La partie alerting `alertmanager-core.homelab:9093` est appliquée lorsque Alertmanager est en place. A voir plus bas dans le document.
 
 Exécution du container
 
 ```bash
 sudo podman run -d \
-  -p 9090:9090 \
-  --name prometheus \
-  -v /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
-  -v /opt/prometheus/rules:/etc/prometheus/rules \
-  -v prometheus-data:/prometheus \
-  docker.io/prom/prometheus \
-  --config.file=/etc/prometheus/prometheus.yml
+    -p 9090:9090 \
+    --name prometheus \
+    -v /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
+    -v prometheus-data:/prometheus \
+    docker.io/prom/prometheus \
+    --config.file=/etc/prometheus/prometheus.yml
 ```
-
-> L'option `-v /opt/prometheus/rules:/etc/prometheus/rules` est à ajouter lorsque Alertmanager est en place. A voir plus bas dans le document.
 
 Modification du fichier de configuration nftables `/etc/nftables.conf` pour autoriser les requêtes sur le port de prometheus `tcp:9090` en provenance de `rps-core`. De plus, il faut autoriser le traffic forwardé via l'interface `podman0` qui est le bridge par défaut pour les containers podman
 
@@ -832,8 +783,7 @@ global:
   evaluation_interval: 15s
 
 rule_files:
-  # - "first.rules"
-  # - "second.rules"
+  - "/etc/prometheus/rules/*.yml"
 
 alerting:
   alertmanagers:
@@ -856,6 +806,7 @@ scrape_configs:
           - vaultwarden-core.homelab:9100
           - gitlab-core.homelab:9100
           - grafana-core.homelab:9100
+          - alertmanager-core.homelab:9100
           - rps-core.homelab:9100
 
 ```
@@ -1076,7 +1027,7 @@ Pour se connecter sur l'interface de Grafana on tape cette url `https://grafana.
 
 ---
 
-> Cette section couvre la partie `AlertManager`
+> Cette section couvre la partie `AlertManager`. L'envoi de mail est fonctionnelle uniquement après avec mis en place le serveur mail `mail-core`, voir le chapitre 14.
 
 # 1. Création de la VM
 
@@ -1137,9 +1088,6 @@ dns_config : Création du nouveau lien symbolique vers /etc/resolv.conf --------
 ```
 
 Exécution du playbook d'installation de `node_exporter`
-
-```bash
-Pour exécuter le playbook, il faut lancer la commande suivante
 
 ```bash
 ansible-playbook -i envs/100-core/00_inventory.yml -l 'alertmanager-core.homelab,' playbooks/01_prometheus_node_exporter.yml
@@ -1213,13 +1161,14 @@ Création du fichier `/opt/alertmanager/config/alertmanager.yml`
 
 ```yml
 global:
-  smtp_smarthost: 'smtp01-core.homelab:587'
-  smtp_from: 'alertmanager@ng-hl.com'
-  smtp_auth_username: '<username>'
-  smtp_auth_password: '<password>'
+  resolve_timeout: 5m
+  smtp_smarthost: 'mail-core.homelab:25'
+  smtp_from: 'supervision@ng-hl.com'
+  smtp_require_tls: false
 
 route:
   receiver: 'email-alerts'
+  group_by: ['alertname', 'instance']
   group_wait: 30s
   group_interval: 5m
   repeat_interval: 4h
@@ -1227,7 +1176,31 @@ route:
 receivers:
   - name: 'email-alerts'
     email_configs:
-      - to: '<mail>'
+      - to: 'nicolas.gobert@ikmail.com'
+        send_resolved: true
+        headers:
+          from: 'Homelab Supervision <supervision@ng-hl.com>'
+          subject: '{{ range .Alerts }}[ALERTE] {{ .Labels.alertname }} - {{ .Labels.severity }} - {{ .Status }}{{ end }}'
+        html: |
+          <html>
+          <body style="font-family: Arial, sans-serif; color: #333;">
+            {{ range .Alerts }}
+            <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px; border-radius:5px;">
+              <h2 style="color: {{ if eq .Status "firing" }}#d9534f{{ else }}#5cb85c{{ end }};">
+                {{ if eq .Status "firing" }}🚨 ALERTE{{ else }}✅ RESOLU{{ end }} : {{ .Labels.alertname }}
+              </h2>
+              <p><b>Gravité :</b> {{ .Labels.severity }}</p>
+              <p><b>Instance :</b> {{ .Labels.instance }}</p>
+              <p><b>Description :</b> {{ .Annotations.description }}</p>
+              <p><b>Résumé :</b> {{ .Annotations.summary }}</p>
+            </div>
+            {{ end }}
+            <hr>
+            <p style="font-size:0.9em; color:#777;">
+              Alerte générée par <a href="{{ .ExternalURL }}">{{ .ExternalURL }}</a>
+            </p>
+          </body>
+          </html>
 
 ```
 
@@ -1241,50 +1214,5 @@ sudo podman run -d \
   -v /opt/alertmanager/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml \
   docker.io/prom/alertmanager:latest \
   --config.file=/etc/alertmanager/alertmanager.yml \
-  --storage.path=/alertmanager \
-  --web.listen-address=0.0.0.0:9093
+  --storage.path=/alertmanager
 ```
-
-Création du fichier vhost `/etc/nginx/sites-available` sur `rps-core`
-
-```bash
-server {
-    listen 80;
-    server_name alertmanager.ng-hl.fr am.ng-hl.fr;
-    return 301 https://$host$request_uri;
-}
-
-server {
-    listen 443 ssl;
-    server_name alertmanager.ng-hl.fr am.ng-hl.fr;
-
-    ssl_certificate     /etc/ssl/certs/wildcard.ng-hl.com/fullchain.cer;
-    ssl_certificate_key /etc/ssl/certs/wildcard.ng-hl.com/privkey.key;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-    ssl_prefer_server_ciphers on;
-    
-    access_log /var/log/nginx/alertmanager.access.log;
-    error_log  /var/log/nginx/alertmanager.error.log;
-
-    location / {
-        proxy_pass         http://alertmanager-core.homelab:9093/;
-        proxy_set_header   Host $host;
-        proxy_set_header   X-Real-IP $remote_addr;
-        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded-Proto $scheme;
-        proxy_read_timeout  90;
-        proxy_http_version  1.1;
-        proxy_set_header    Upgrade $http_upgrade;
-        proxy_set_header    Connection "upgrade";
-    }
-}
-```
-
-On peut se rendre sur `https://alertmanager.ng-hl.com` pour accéder à l'interface web de AlertManager et visualiser les alertes en cours.
-
----
-
-# 4. Ajout de l'alerting par mail
-
-> Cette section dépend du `Chapitre 14 - SMTP` qui traite de l'installation et de la configuration du serveur de mail `mail-core.homelab`.

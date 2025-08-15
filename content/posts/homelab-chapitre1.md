@@ -239,6 +239,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
             - [x] Configuration de acme + test de renouvellement forcé
             - [x] Script de déploiement du nouveau certificat (indexé sur la liste des services exposés)
             - [x] Test de bout en bout
+    
     - [ ] Pipeline CI/CD "vm-factory"
 
 ---
@@ -247,16 +248,14 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 
 - [ ] Niveau 3
     - [ ] Stack d'observabilité Prometheus / Grafana / AlertManager
-        - [ ] Ajout des entrées DNS
+        - [x] Ajout des entrées DNS
             - [x] reverseproxysup-core.homelab rps-core.homelab (CNAME) supervision-core.homelab (CNAME)
             - [x] prometheus-core.homelab
             - [x] grafan-core.homelab
-            - [ ] alertmanager-core.homelab am-core.homelab (CNAME)
-            - [ ] supervision.ng-hl.com prometheus.ng-hl.com (CNAME) grafana.ng-hl.com (CNAME) alertmanager.ng-hl.com (CNAME)
-        - [ ] Rôle de déploiement Ansible reverse-proxy-sup
-            - [ ] ...
-            - [ ] ...
-        - [ ] Reverse Proxy Sup (rps)
+            - [x] alertmanager-core.homelab am-core.homelab (CNAME)
+            - [x] supervision.ng-hl.com prometheus.ng-hl.com (CNAME) grafana.ng-hl.com (CNAME) alertmanager.ng-hl.com (CNAME)
+        - [x] Rôle de déploiement Ansible reverse-proxy-sup
+        - [x] Reverse Proxy Sup (rps)
             - [x] Mise en place du serveur prometheus-core
             - [x] Intégration au niveau de la sauvegarde Proxmox VE
             - [x] Configuration de l'OS avec Ansible
@@ -273,7 +272,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
                         - [x] Configuration du TLS avec le certificat wildcard
                     - [x] prometheus.conf
                     - [x] grafana.conf
-                    - [ ] alertmanager.conf
+                    - [x] alertmanager.conf
                 - [x] Ouvrir les flux via nftables
                 - [x] Ouvrir le flux depuis l'extérieur via pfSense
         - [ ] Prometheus
@@ -287,9 +286,12 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
                     - [x] Prise en compte de la configuration de Prometheus
             - [x] Mise à jour de la configuration nftables (accès port 9090 et forwarder sur podman0)
             - [x] Test de la persistence de la données
-            - [x] Validation du dashboard Node Exporter
+            - [x] Validation de la remontée de métriques Node Exporter
             - [x] Intégration d'un hôte de test
             - [x] Création d'un rôle Ansible "prometheus-clients"
+            - [x] Intégration de tous les serveurs existants
+            - [ ] Création d'une matrice pour les daemons sur les serveurs
+                - [ ] Rajout d'une sonde pour les daemons
             - [ ] Rédiger une fiche d'exploitation
         - [ ] Grafana
             - [x] Mise en place du serveur grafana-core
@@ -306,13 +308,17 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
             - [x] Validation du dashboard Node Exporter
             - [ ] Rédiger une ficher d'exploitation
         - [ ] AlertManager
-            - [ ] Mise en place du serveur alertmanager-core
-            - [ ] Intégration au niveau de la sauvegarde Proxmox VE
-            - [ ] Configuration de l'OS avec Ansible
-            - [ ] Podman
-                - [ ] Installation et configuration
-                - [ ] Création du volume alertmanager-data
-                - [ ] Déploiement de AlertManager 
+            - [x] Mise en place du serveur alertmanager-core
+            - [x] Intégration au niveau de la sauvegarde Proxmox VE
+            - [x] Configuration de l'OS avec Ansible
+            - [x] Podman
+                - [x] Installation et configuration
+                - [x] Création du volume alertmanager-data
+                - [x] Déploiement de AlertManager
+            - [x] Configuration du template de mail
+            - [x] Test KO
+            - [x] Test retour OK
+            - [ ] Rédiger une fiche d'exploitation
     - [ ] PKI Interne
     - [ ] Netbox
         - [ ] Mise en place du serveur netbox-core
@@ -388,8 +394,6 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 
 # 6.4. Level 4 (WIP)
 
-- [ ] Chantier d'uniformisation de nftables
-- [ ] Chantier de gestion de la totalité de la configuration via Ansible pour coller au principe de l'IaC
 - [ ] Architecture 0 trust
     - [ ] Flux de la stack d'observabilité
 
@@ -425,6 +429,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 | opentofu-core.homelab | 192.168.100.246 | Debian 12.10 |
 | prometheus-core.homelab | 192.168.100.245 | Debian 12.10 | prometheus-core.ng-hl.com prometheus.ng-hl.com (CNAME)
 | grafana-core.homelab | 192.168.100.244 | Debian 12.10 | grafana-core.ng-hl.com grafana.ng-hl.com (CNAME)
+| alertmanager-core.homelab am-core.homelab (CNAME) | 192.168.100.243 | Debian 12.10 | alertmanager-core.ng-hl.com alertmanager.ng-hl.com (CNAME)
 | reverseproxysup-core.homelab rps-core.homelab (CNAME) | 192.168.100.242 | Debian 12.10 | supervision-core.ng-hl.com supervision.ng-hl.com (CNAME)
 | mail-core.homelab | 192.168.100.241 | Debian 12.10 |
 | ansibledev-core.homelab | 192.168.100.11 | Debian 12.10 |
