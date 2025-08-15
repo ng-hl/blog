@@ -290,8 +290,10 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
             - [x] Intégration d'un hôte de test
             - [x] Création d'un rôle Ansible "prometheus-clients"
             - [x] Intégration de tous les serveurs existants
-            - [ ] Création d'une matrice pour les daemons sur les serveurs
-                - [ ] Rajout d'une sonde pour les daemons
+            - [x] Création d'une matrice pour les services sur les serveurs
+                - [x] Blackbox
+                    - [x] Intégration de la supervision pour l'état des services (daemons)
+                    - [x] Surveillance de l'exposition du port associé
             - [ ] Rédiger une fiche d'exploitation
         - [ ] Grafana
             - [x] Mise en place du serveur grafana-core
@@ -303,6 +305,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
                 - [x] Déploiement de Grafana 
                     - [x] Prise en compte de la datasource Prometheus
                     - [x] Prise en compte du dashboard Node Exporter
+                    - [ ] Prise en compte du dashboard Blackbox Exporter
             - [x] Mise à jour de la configuration nftables (accès port 3000 et forwarder sur podman0)
             - [x] Test de la persistence de la données
             - [x] Validation du dashboard Node Exporter
@@ -315,7 +318,9 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
                 - [x] Installation et configuration
                 - [x] Création du volume alertmanager-data
                 - [x] Déploiement de AlertManager
-            - [x] Configuration du template de mail
+            - [] Configuration du template de mail
+                - [x] Node Exporter
+                - [ ] Blackbox Exporter 
             - [x] Test KO
             - [x] Test retour OK
             - [ ] Rédiger une fiche d'exploitation
@@ -396,6 +401,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 
 - [ ] Architecture 0 trust
     - [ ] Flux de la stack d'observabilité
+- [ ] Surveillance des ports exposés sur le réseau homelab
 
 ---
 
