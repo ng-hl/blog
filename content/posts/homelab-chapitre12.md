@@ -142,3 +142,9 @@ OpenTofu v1.10.5
 on linux_amd64
 ```
 
+---
+
+# Lien avec Proxmox VE
+
+> Afin de pouvoir interagir avec notre Proxmox VE, un compte utilisateur est nécessaire. La bonne pratique est de créer un compte utilisateur dédié, basé sur le principe du moindre privilège avec un token.
+

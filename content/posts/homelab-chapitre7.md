@@ -148,9 +148,9 @@ pipx install --include-deps ansible
 pipx install "ansible-lint[yamllint]"
 ```
 
-> Nous parlons plus en détail de `ansible-lint` au la section 2 du chapitre 8.
+> Nous parlons plus en détail de `ansible-lint` à la section 2 du chapitre 8.
 
-A ce stade, nous pouvons vérifier que `Ansible` est correctement installé en appelant la commande ansible et en véirifiant la version
+A ce stade, nous pouvons vérifier que `Ansible` est correctement installé en appelant la commande ansible et en vérifiant la version
 
 ```bash
 ansible --version
@@ -160,7 +160,7 @@ ansible --version
 
 # 4. Configuration de Ansible
 
-Création de la structure des répertoires représentatif des environnements `core` et `vms`
+Création de la structure des répertoires représentatifs des environnements `core` et `vms`
 
 ```bash
 mkdir -p envs/100-core envs/200-vms
@@ -228,7 +228,7 @@ all:
         ansible_python_interpreter: /usr/bin/python3
 ```
 
-On test la communication entre notre serveur ànsible-core` et les managed-nodes via ansible
+On test la communication entre notre serveur `ansible-core` et les managed-nodes via ansible
 
 ```bash
 # Commande Anasible avec le module ping
