@@ -36,6 +36,8 @@ categories: ["homelab"]
 
 ---
 
+# 2. Observabilité et supervision sur les services de type http et https
+
 > Afin d'observer et de superviser les services web exposé nous allons utiliser `blackbox`. Ce service va être ajouté au niveau du serveur `prometheus-core` via un container géré par podman, tout comme le container `prometheus`. Nous n'avons pas d'actions à réaliser pour `node exporter`, celui étant directement géré par le container `prometheus` (voir le chapitre 13).
 
 > Il est important d'ouvrir les flux via `nftables` pour toutes les url que l'on veux checker avec `blackbox`.
@@ -85,3 +87,7 @@ Restart du container `prometheus` pour charger la nouvelle configuration
 ```bash
 sudo podman restart prometheus
 ```
+
+---
+
+# 3. Observabilité et supervision sur les services de type systemd

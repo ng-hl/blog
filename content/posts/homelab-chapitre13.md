@@ -1291,7 +1291,7 @@ routes:
         alertname: "DailySelfcheck"
       receiver: 'mail-selfcheck'
       group_wait: 30s
-      group_interval: 1m
+      group_interval: 5m
       repeat_interval: 24h
 
 # A la fin du fichier
