@@ -1163,7 +1163,7 @@ Création du fichier `/opt/alertmanager/config/alertmanager.yml`
 global:
   resolve_timeout: 5m
   smtp_smarthost: 'mail-core.homelab:25'
-  smtp_from: 'supervision@ng-hl.com'
+  smtp_from: 'xxxxxxx'
   smtp_require_tls: false
 
 route:
@@ -1176,10 +1176,10 @@ route:
 receivers:
   - name: 'email-alerts'
     email_configs:
-      - to: 'nicolas.gobert@ikmail.com'
+      - to: 'xxxxxxx'
         send_resolved: true
         headers:
-          from: 'Homelab Supervision <supervision@ng-hl.com>'
+          from: 'Homelab Supervision <xxxxxx>'
           subject: '{{ range .Alerts }}[ALERTE] {{ .Labels.alertname }} - {{ .Labels.severity }} - {{ .Status }}{{ end }}'
         html: |
           <html>
@@ -1215,4 +1215,116 @@ sudo podman run -d \
   docker.io/prom/alertmanager:latest \
   --config.file=/etc/alertmanager/alertmanager.yml \
   --storage.path=/alertmanager
+```
+
+---
+
+> Cette section couvre la partie `self-check` de la stack d'observabilité / supervision. L'objectif est d'envoyer un mail vers l'extérieur tous les jours à 9h pour valider le bon fonctionnement de la châine d'alerting (Prometheus -> AlertManager -> Mail). L'envoi de mail est fonctionnelle uniquement après avoir mis en place le serveur mail `mail-core`, voir le chapitre 14.
+
+> La mise en place de la persistence des données n'est pas nécessaire dès maintenant. Cependant, je choisi dès maintenant de stocker les données dans un volume et de gérer la persistence depuis pushgateway pour un futur usage.
+
+Création du volume `pushgateway-data`
+
+```bash
+sudo podman volume create pushgateway-data
+```
+
+Exécution du container `pushgateway` sur le serveur `prometheus-core`
+
+```bash
+sudo podman run -d \
+  --name pushgateway \
+  --network prometheus-network \
+  -p 9091:9091 \
+  -v pushgateway-data:/data \
+  prom/pushgateway:latest \
+  --persistence.file=/data/pushgateway.db \
+  --persistence.interval=5m
+```
+
+Modification de la configuration de `prometheus`
+
+```yml
+# Elément à ajouter dans la section "scrape_configs"
+- job_name: 'pushgateway'
+  static_configs:
+    - targets: ['pushgateway:9091']
+```
+
+Validation du fonctionnement de pushgateway et de l'intégration de la métrique dans prometheus via la requête suivante exécutée depuis le serveur `prometheus-core`
+
+```bash
+# Envoi de la métrique
+echo "supervision_selfcheck 1" | curl --data-binary @- http://localhost:9091/metrics/job/selfcheck
+
+# Affichage
+curl -s "http://localhost:9090/api/v1/query?query=supervision_selfcheck"
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"supervision_selfcheck","exported_job":"selfcheck","instance":"pushgateway:9091","job":"pushgateway"},"value":[1755592850.958,"1"]}]}}
+# Ou
+curl -s "https://prometheus.ng-hl.com/api/v1/query?query=supervision_selfcheck"
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"supervision_selfcheck","exported_job":"selfcheck","instance":"pushgateway:9091","job":"pushgateway"},"value":[1755592778.682,"1"]}]}}
+```
+
+Création du fichier de rule `/opt/prometheus/rules/selfcheck_alerts.yml`
+
+```yml
+groups:
+- name: selfcheck
+  rules:
+  - alert: DailySelfcheck
+    expr: (time() - timestamp(supervision_selfcheck{exported_job="selfcheck"})) < 600
+    for: 1m
+    labels:
+      severity: info
+      team: monitoring
+    annotations:
+      summary: "Test quotidien de la supervision ✅"
+      description: "Supervision OK ✅"
+```
+
+Sur le serveur `alertmanager-core`, modification de la configuration de alertmanager via le fichier `/opt/alertmanager/config/alertmanager.yml`
+
+```yml
+# A ajouter au niveau de la section route
+routes:
+    - match:
+        alertname: "DailySelfcheck"
+      receiver: 'mail-selfcheck'
+      group_wait: 30s
+      group_interval: 1m
+      repeat_interval: 24h
+
+# A la fin du fichier
+- name: 'mail-selfcheck'
+    email_configs:
+      - to: 'xxxxxxxxxx'
+        send_resolved: true
+        headers:
+          from: 'Homelab Supervision <xxxxxx>'
+          subject: '[Supervision] 🔔 Self-check quotidien'
+        html: |
+          <html>
+          <body style="font-family: Arial, sans-serif; color: #333;">
+            {{ range .Alerts }}
+            <div style="border:1px solid #5cb85c; padding:10px; margin-bottom:10px; border-radius:5px;">
+              <h2 style="color:#5cb85c;">✅ Self-check quotidien : {{ .Labels.alertname }}</h2>
+              <p><b>Description :</b> {{ .Annotations.description }}</p>
+              <p><b>Résumé :</b> {{ .Annotations.summary }}</p>
+            </div>
+            {{ end }}
+            <hr>
+            <p style="font-size:0.9em; color:#777;">
+              Alerte générée par <a href="{{ .ExternalURL }}">{{ .ExternalURL }}</a>
+            </p>
+          </body>
+          </html>
+```
+
+Mise en place du cron sur `prometheus-core`
+
+```bash
+crontab -e
+```
+```bash
+0 9 * * * echo "supervision_selfcheck 1" | curl --data-binary @- http://localhost:9091/metrics/job/selfcheck; sleep 180; curl -X DELETE http://localhost:9091/metrics/job/selfcheck
 ```

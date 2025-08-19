@@ -51,7 +51,7 @@ Exécution du container `blackbox` sur le serveur `prometheus-core`
 ```bash
 sudo podman run -d \
     --name blackbox-exporter \
-    --network prometheus-network
+    --network prometheus-network \
     -p 9115:9115 \
     quay.io/prometheus/blackbox-exporter:latest
 ```
@@ -65,11 +65,11 @@ Ajout au niveau de la configuration du container `prometheus` via le fichier `/o
       module: [http_2xx]
     static_configs:
       - targets:
-        - https://vaultwarden-core.homelab
-        - https://gitlab-core.homelab
-        - https://prometheus-core.homelab
-        - https://grafana-core.homelab
-        - https://alertmanager-core.homelab
+        - https://vaultwarden.ng-hl.com
+        - https://gitlab.ng-hl.com
+        - https://prometheus.ng-hl.com
+        - https://grafana.ng-hl.com
+        - https://alertmanager.ng-hl.com
         - https://pfsense-core.homelab
     relabel_configs:
       - source_labels: [__address__]
@@ -84,4 +84,4 @@ Restart du container `prometheus` pour charger la nouvelle configuration
 
 ```bash
 sudo podman restart prometheus
-``` 
+```

@@ -275,6 +275,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
                     - [x] alertmanager.conf
                 - [x] Ouvrir les flux via nftables
                 - [x] Ouvrir le flux depuis l'extérieur via pfSense
+                - [ ] Fiche d'exploitaiton nginx
         - [ ] Prometheus
             - [x] Mise en place du serveur prometheus-core
             - [x] Intégration au niveau de la sauvegarde Proxmox VE
@@ -291,9 +292,8 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
             - [x] Création d'un rôle Ansible "prometheus-clients"
             - [x] Intégration de tous les serveurs existants
             - [x] Création d'une matrice pour les services sur les serveurs
-                - [x] Blackbox
-                    - [x] Intégration de la supervision pour l'état des services (daemons)
-                    - [x] Surveillance de l'exposition du port associé
+                - [x] Intégration de la supervision pour l'état des services (daemons) via Blackbox Exporter
+                - [x] Surveillance de l'exposition du port associé via Node Exporter
             - [ ] Rédiger une fiche d'exploitation
         - [ ] Grafana
             - [x] Mise en place du serveur grafana-core
@@ -318,11 +318,18 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
                 - [x] Installation et configuration
                 - [x] Création du volume alertmanager-data
                 - [x] Déploiement de AlertManager
-            - [] Configuration du template de mail
+            - [x] Configuration du template de mail
                 - [x] Node Exporter
-                - [ ] Blackbox Exporter 
+                - [x] Blackbox Exporter 
             - [x] Test KO
             - [x] Test retour OK
+            - [x] Mise en place du self-check
+                - [x] Installation de pushgateway
+                - [x] Validation de l'envoi de la métrique
+                - [x] Mise en place du cron pour pousser la métrique `supervision_selfcheck`
+                - [x] Création de la rule `selfcheck-rules.yml`
+                - [x] Création du template de mail
+                - [x] Test
             - [ ] Rédiger une fiche d'exploitation
     - [ ] PKI Interne
     - [ ] Netbox
