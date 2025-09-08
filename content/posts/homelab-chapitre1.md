@@ -241,6 +241,12 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
             - [x] Test de bout en bout
     
     - [ ] Pipeline CI/CD "vm-factory"
+        - [ ] Proxmox VE
+            - [ ] Création d'un utilisateur dédié `opentofu`
+            - [ ] Application des droits nécessaires
+            - [ ] Génération du token
+        - [ ] OpenTofu
+            - [ ] 
 
 ---
 
