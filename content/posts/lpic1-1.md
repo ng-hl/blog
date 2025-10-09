@@ -9,8 +9,7 @@ categories: ["Linux", "LPIC"]
 
 > Cette série d'articles m'accompagne dans mon parcours d'apprentissage concernant la certification LPIC 1 (Linux Professional Institute Certification).
 
-
-# Qu'est-ce que la LPIC 1 ?
+# Qu'est-ce que la LPIC 1 ?
 
 La LPIC 1 est une certification destinée aux administrateurs Linux ou toutes personnes portant un intérêt sur les OS de type GNU/Linux. Celle-ci est reconnue à l'échelle internationale et donne des bases solides sur l'architecture et l'administration d'un système Linux. Cette certification regroupe les éléments présent dans la LPI 101 et la LPI 102.
 
