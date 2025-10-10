@@ -13,6 +13,23 @@ categories: ["homelab"]
 
 ---
 
+# 0. Todo list
+
+- [ ] Gestion de l'exécution du playbook
+    - [ ] Sécurisé via API SSH
+        - [ ] Utilisateur spécifique
+        - [ ] Clé SSH 
+        - [ ] Droits restreints
+- [ ] Gestion des archives des facts
+- [ ] Intégration des facts dans la DB
+- [ ] Gestion du roulement des configurations Ansible dans la DB
+- [ ] Gestion des logs applicatifs
+- [ ] Intégrer la clé SSH de l'utilisateur Ansible dans le container app
+- [ ] Modifier la configuration de la commande Ansible (+ user friendly)
+- [ ] Test déploiement from scratch
+
+---
+
 # 1. Création de la VM
 
 Nous allons utiliser le template `debian12-template` créé lors du chapitre 4. Sur Proxmox on crée un clone complet à partir de ce template. Voici les caractéristiques de la VM :
