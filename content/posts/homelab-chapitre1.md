@@ -180,6 +180,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
         - [x] pfSense
             - [x] Activer le HTTPS
             - [x] Activer le renouvellement automatique du certificat TLS
+                - [x] Ajout de l'entrée DNS pfsense.ng-hl.com
                 - [x] Installation du module acme
                 - [x] Configuration de l'Account Key acme
                 - [x] Configuration du certificate acme
@@ -188,6 +189,13 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
                 - [x] Test avec la production acme
                 - [x] Mise en place du HTTPS avec le certificat nouvellement créé
                 - [x] Vérification des autres services + forcer un renouvellement via acme depuis pfSense et depuis acme-core
+        - [x] Proxmox VE
+            - [X] Activer le HTTPS
+            - [X] Activer le renouvellement automatique du certificat TLS
+                - [x] Ajout de l'entrée DNS pve.ng-hl.com
+                - [x] Création de l'account ACME sur Proxmox VE
+                - [x] Création du plugin ACME de type DNS
+                - [x] Demande de certificat via ACME depuis Proxmox VE
         - [x] Templates / VM
             - [x] Durcissement de SSH
                 - [x] Désactivation de l'accès root en direct via SSH

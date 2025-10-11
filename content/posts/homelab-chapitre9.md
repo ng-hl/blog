@@ -335,15 +335,7 @@ Enfin, on simule l'exécution du cron précédemment créé avec le script `acme
 
 > L'entrée DNS `pve.ng-hl.com` est ajoutée au niveau du serveur DNS interne `dns-core.homelab`. Le token avec les accès en RW sur la zone DNS `ng-hl.com` de CloudFlare est également créé.
 
-Il faut modifier le nom et quelques éléments de configuration au niveau du node Proxmox VE.
-
-Modification du hostname 
-
-```bash
-hostnamectl set-hostname pve01.ng-hl.com
-```
-
-> Attention ! Renommer le node Proxmox VE à une incidence. Le node géré au niveau du cluster Proxmox portera toujours l'ancien nom `pve`. La correction n'est pas une mince affaire et nécessite de nombreuses manipulation au niveau du node Proxmox. A manier avec précaution sur un environnement de production et pensez à faire une sauvegarde de votre node `/etc/pve/nodes/pve` avant de faire les opérations.
+> Attention ! Renommer le node Proxmox VE à une incidence. Le node géré au niveau du cluster Proxmox portera toujours l'ancien nom `pve`. La correction n'est pas une mince affaire et nécessite de nombreuses manipulation au niveau du node Proxmox. A manier avec précaution sur un environnement de production et pensez à faire une sauvegarde de votre node `/etc/pve/nodes/pve` avant de faire les opérations. Dans ce cas, je choisi de rester avec le nom `pve`.
 
 Vérification que le node accède bien à internet
 
