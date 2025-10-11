@@ -148,3 +148,52 @@ on linux_amd64
 
 > Afin de pouvoir interagir avec notre Proxmox VE, un compte utilisateur est nécessaire. La bonne pratique est de créer un compte utilisateur dédié, basé sur le principe du moindre privilège avec un token.
 
+> Les commandes ci-dessous sont à exécutées en tant que root sur le node `pve` Proxmox VE
+
+Création de l'utilisateur `opentofu-deploy`
+
+```bash
+pveum useradd opentofu-deploy@pve --password "MyPassword"
+```
+
+Création du token `opentofu-token` associé à l'utilisateur `opentofu-deploy`. On veille à le conserver dans notre coffre fort.
+
+```bash
+pveum user token add opentofu-deploy@pve opentofu-token --comment "Token OpenTofu" --privsep
+```
+
+Création du rôle `Opentofu-role` dans lequel on applique les droits nécessaires
+
+```bash
+pveum roleadd Opentofu-role -privs "VM.Allocate,VM.Audit,VM.Config.CDROM,VM.Config.Disk,VM.Config.Network,VM.Config.Options,VM.Monitor,VM.PowerMgmt"
+```
+
+Rattachement de l'utilisateur `opentofu-deploy` au rôle `Opentofu-role`
+
+```bash
+pveum aclmod / -user opentofu-deploy@pve -role Opentofu-role
+```
+
+> Les éléments ci-dessous sont à versionner et stocker sur un serveur externe au homelab, dans un outil de versioning externe comme Gitlab ou Github et à exécuter depuis une machine externe au homelab. Pourquoi ? Parce que plus tard, le but est d'avoir une infrastructure déclarative et reproductible. Les actions suivantes sont donc réalisées sur mon poste depuis mon réseau local.
+
+Création du répertoire dédiée pour `Opentofu`
+
+```bash
+mkdir -p /opt/opentofu-homelab
+```
+
+Initialiser le dépôt Git
+
+```bash
+git init
+```
+
+Création du fichier `.gitignore` avec les éléments ci-dessous
+
+```bash
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform/
+```
+
