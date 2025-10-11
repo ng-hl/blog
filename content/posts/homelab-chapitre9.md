@@ -328,3 +328,42 @@ Enfin, on simule l'exécution du cron précédemment créé avec le script `acme
 ```bash
 /root/acme-deploy/acme-deploy.sh >> /var/log/acme-deploy.log 2>&1
 ```
+
+---
+
+# 9. Application du HTTPS sur le node Proxmox VE
+
+> L'entrée DNS `pve.ng-hl.com` est ajoutée au niveau du serveur DNS interne `dns-core.homelab`. Le token avec les accès en RW sur la zone DNS `ng-hl.com` de CloudFlare est également créé.
+
+Il faut modifier le nom et quelques éléments de configuration au niveau du node Proxmox VE.
+
+Modification du hostname 
+
+```bash
+hostnamectl set-hostname pve01.ng-hl.com
+```
+
+> Attention ! Renommer le node Proxmox VE à une incidence. Le node géré au niveau du cluster Proxmox portera toujours l'ancien nom `pve`. La correction n'est pas une mince affaire et nécessite de nombreuses manipulation au niveau du node Proxmox. A manier avec précaution sur un environnement de production et pensez à faire une sauvegarde de votre node `/etc/pve/nodes/pve` avant de faire les opérations.
+
+Vérification que le node accède bien à internet
+
+```bash
+ping -c1 google.fr
+```
+
+> Il est nécessaire de se connecter en tant que `root` sur la GUI de Proxmox VE pour avoir accès à la configuration ACME
+
+Se rendre dans 
+
+Pour activer le plugin CloudFlare pour ACME depuis la GUI de Proxmox VE, se rendre dans `Datacenter` -> `ACME` et créer un account avec les informations suivantes : 
+- Account Name -> Le nom du compte
+- E-Mail
+- ACME Directory -> Let's Encrypt V2 dans notre cas
+
+Ensuite, créer un `Challenge Plugins` avec les éléments suivants :
+- DNS API -> Cloudflare Managed DNS
+- CF_Token -> Le token ayant les droits RW sur la zone DNS CloudFlare
+
+Enfin, se rendre dans `Datacenter` -> `pve` (le nom du node) -> `System` -> `Certificates`. Choisir le type `DNS`, le plugin `Cloudflare` (que l'on vient de créer) puis le nom `pve.ng-hl.com`.
+
+Pour générer le certificat associé au nom `pve.ng-hl.com`, sélectionner l'élément que l'on vient de créer dans la section `ACME` puis cliquer sur `Order Certificats Now`.
