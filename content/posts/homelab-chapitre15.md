@@ -40,9 +40,9 @@ categories: ["homelab"]
 
 > Afin d'observer et de superviser les services web exposé nous allons utiliser `blackbox`. Ce service va être ajouté au niveau du serveur `prometheus-core` via un container géré par podman, tout comme le container `prometheus`. Nous n'avons pas d'actions à réaliser pour `node exporter`, celui étant directement géré par le container `prometheus` (voir le chapitre 13).
 
-> Il est important d'ouvrir les flux via `nftables` pour toutes les url que l'on veux checker avec `blackbox`.
+> Il est important d'ouvrir les flux via `nftables` pour toutes les url que l'on veut checker avec `blackbox`.
 
-> Par défaut sous Podman, deux containers exécutés sur un même host ne partage pas un bridge commun et donc ne peuvent pas communiquer entre eux. C'est pour cela qu'il est nécessaire de créer un réseau podman et d'y intégrer les deux container `prometheus` et `blackbox-exporter`.
+> Par défaut sous Podman, deux containers exécutés sur un même host ne partage pas un bridge commun et donc ne peuvent pas communiquer entre eux. C'est pour cela qu'il est nécessaire de créer un réseau podman et d'y intégrer les deux containers `prometheus` et `blackbox-exporter`.
 
 ```bash
 sudo podman network create prometheus-network
@@ -72,7 +72,7 @@ Ajout au niveau de la configuration du container `prometheus` via le fichier `/o
         - https://prometheus.ng-hl.com
         - https://grafana.ng-hl.com
         - https://alertmanager.ng-hl.com
-        - https://pfsense-core.homelab
+        - https://pfsense.ng-hl.com
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
