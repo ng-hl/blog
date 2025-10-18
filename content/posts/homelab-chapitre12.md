@@ -174,12 +174,12 @@ Rattachement de l'utilisateur `opentofu-deploy` au rôle `Opentofu-role`
 pveum aclmod / -user opentofu-deploy@pve -role Opentofu-role
 ```
 
-> Les éléments ci-dessous sont à versionner et stocker sur un serveur externe au homelab, dans un outil de versioning externe comme Gitlab ou Github et à exécuter depuis une machine externe au homelab. Pourquoi ? Parce que plus tard, le but est d'avoir une infrastructure déclarative et reproductible. Les actions suivantes sont donc réalisées sur mon poste depuis mon réseau local.
+> Les commandes ci-dessous sont à exécutées sur le serveur `opentofu-core`
 
 Création du répertoire dédiée pour `Opentofu`
 
 ```bash
-mkdir -p /opt/opentofu-homelab
+mkdir -p /opt/opentofu
 ```
 
 Initialiser le dépôt Git
@@ -196,4 +196,6 @@ Création du fichier `.gitignore` avec les éléments ci-dessous
 *.tfvars
 .terraform/
 ```
+
+
 

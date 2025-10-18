@@ -9,7 +9,7 @@ categories: ["homelab"]
 
 > Ce document contient les livrables issus de la mise en place du service `Onlyfacts`. Il s'agit d'un outil de récupération et de traitement des facts Ansible. L'objectif est de développer un outil de mise d'inventaire et de mise en conformité. Combien de Linux sont présents sur mon infrastructure ? Combien de Debian 11 ? Combien expose le service httpd ? Si oui, combien sur la version 2.4.2 ? Combien disposent-ils de mises à jour de sécurité en attente ?
 
-> Onlyfacts est un outil toujours en cours de développement accessible via ce [dépôt](https://gitlab.com/nicolas.gobert/onlyfacts)
+> Onlyfacts est un outil toujours en cours de développement accessible via ce [dépôt](https://github.com/nicolas.gobert/onlyfacts)
 
 ---
 
