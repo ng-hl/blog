@@ -78,7 +78,7 @@ dns_config : Configuration du FallbackDNS dans /etc/resolved.conf --------------
 
 # 3. Installation de Gitlab
 
-> Avant de procéder à l'installation, il faut ajouter les entrée ̀`gitlab-core.ng-hl.com` et l'alias `gitlab.ng-hl.com`.
+> Avant de procéder à l'installation, il faut ajouter l'entrée DNS ̀`gitlab-core.ng-hl.com` et l'alias `gitlab.ng-hl.com`.
 
 Pour installer Gitlab proprement, on suit la [documentation officielle](https://about.gitlab.com/install/#debian)
 

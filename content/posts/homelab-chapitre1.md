@@ -428,7 +428,24 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 
 ## 6.5. Projets annexes
 
-- [ ] Projet - Agents IA
+- [ ] Hébergement d'un model IA
+    - [ ] Mise en place du serveur ollama-vms
+    - [ ] Configuration de l'OS via Ansible
+        - [ ] Podman
+            - [ ] Installation et configuration
+            - [ ] Création du volume ollama-data
+            - [ ] Déploiement de la stack Ollama + Open-webui
+                - [ ] Création du fichier docker-compose.yml
+                - [ ] Déploiement de ollama
+                    - [ ] Création du volume ollama_data
+                - [ ] Déploiement de open-webui
+                    - [ ] Création du volume open-webui_data
+        - [ ] Mise à jour de la configuration nftables (accès port 443 et forwarder sur podman0)
+        - [ ] Test de la persistence de la données
+        - [ ] Validation du dashboard Node Exporter
+        - [ ] Intégrer l'observabilité sur les performances du model IA
+        - [ ] Rédiger une fiche d'exploitation 
+- [ ] Agents IA
     - [ ] Équipe de développement d'agents IA
         - [ ] Serveur crewai-vms
             - [ ] Création du serveur

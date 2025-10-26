@@ -144,7 +144,7 @@ on linux_amd64
 
 ---
 
-# Lien avec Proxmox VE
+# 4. Lien avec Proxmox VE
 
 > Afin de pouvoir interagir avec notre Proxmox VE, un compte utilisateur est nécessaire. La bonne pratique est de créer un compte utilisateur dédié, basé sur le principe du moindre privilège avec un token.
 
@@ -165,7 +165,7 @@ pveum user token add opentofu-deploy@pve opentofu-token --comment "Token OpenTof
 Création du rôle `Opentofu-role` dans lequel on applique les droits nécessaires
 
 ```bash
-pveum roleadd Opentofu-role -privs "VM.Allocate,VM.Audit,VM.Config.CDROM,VM.Config.Disk,VM.Config.Network,VM.Config.Options,VM.Monitor,VM.PowerMgmt"
+pveum roleadd Opentofu-role -privs "VM.Allocate,VM.Audit,VM.Config.CDROM,VM.Config.Disk,VM.Config.Memory,VM.Config.CPU,VM.Config.Network,VM.Config.Options,VM.Monitor,VM.clone,VM.PowerMgmt"
 ```
 
 Rattachement de l'utilisateur `opentofu-deploy` au rôle `Opentofu-role`
@@ -195,7 +195,61 @@ Création du fichier `.gitignore` avec les éléments ci-dessous
 *.tfstate.backup
 *.tfvars
 .terraform/
+variables.tf
 ```
 
+Création du fichier de configuration du provider `/opt/opentofu/provider.tf`
 
+```hcl
+terraform {
+    required_providers {
+        proxmox = {
+        source = "bpg/proxmox"
+        version = "0.85.1"
+        }
+    }
+}
 
+provider "proxmox" {
+    endpoint = "https://pve.ng-hl.com:8006/"
+    api_token = var.api_token
+    insecure = false
+}
+```
+
+Création du fichier contenant les variables `/opt/opentofu/variables.tf`. Il est également possible de saisir la valeur du token via une variable d'environnement, cela évite d'avoir un token en clair directement dans un fichier.
+
+```hcl
+variable "api_token" {
+  description = "Token to connect Proxmox API"
+  type        = string
+value         = "XXXXXXXXXXXXX"
+}
+```
+
+Positionnement au niveau du répertoire du projet et initialisation de Opentofu
+
+```bash
+tofu init
+```
+
+Tester la communication avec l'instance `Proxmox`
+
+```bash
+tofu plan
+
+No changes. Your infrastructure matches the configuration.
+
+OpenTofu has compared your real infrastructure against your configuration and found no differences, so no changes
+are needed.
+```
+
+---
+
+# 5. Déploiement et destruction d'une ressource
+
+Création du fichier principal `/opt/opentofu/main.tf`. L'objectif est de déployer une VM de test à partir du template `debian12-template`
+
+```hcl
+
+```

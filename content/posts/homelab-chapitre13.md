@@ -460,7 +460,7 @@ sudo podman run -d \
     -p 9090:9090 \
     --name prometheus \
     --network prometheus-network \
-    -v /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
+    -v /opt/prometheus:/etc/prometheus \
     -v prometheus-data:/prometheus \
     docker.io/prom/prometheus \
     --config.file=/etc/prometheus/prometheus.yml 
