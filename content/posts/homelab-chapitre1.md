@@ -9,6 +9,8 @@ categories: ["homelab"]
 
 > Ce document contient les livrables issus de la phase de design du homelab. On doit se poser les bonnes questions pour répondre efficacement au besoin de départ, à savoir, disposer d'un environnement où l'on peut déployer rapidement des serveurs prêt à l'emploi pour divers cas d'usage. La conception est susceptible de changer au fur et à mesure des travaux, cette page est donc susceptible d'évoluer (mise à jour de l'inventaire, ajout de services/fonctionnalités, ...)
 
+> Une évolution est prévue afin d'intégrer un environnement Windows également. Ce projet est en accessible dans la catégorie `Homelab Windows`
+
 ---
 
 # 1. Le hardware
@@ -23,7 +25,7 @@ Pour mettre en place ce homelab, il nous faut un appareil qui dispose de suffisa
 
 ---
 
-# 1. Les environnements
+# 2. Les environnements
 
 Le homelab va être divisé en deux sous-réseaux principaux. Le premier ayant pour objectif d'héberger les divers services utiles au bon fonctionnement du homelab. Le second sera dédié au déploiement et à l'utilisation des VMs et containers pour les tests futurs de technologie, OS, etc.
 
@@ -34,45 +36,45 @@ Le homelab va être divisé en deux sous-réseaux principaux. Le premier ayant p
 
 ---
 
-# 2. Les services
+# 3. Les services
 
 Pour disposer d'un environnement fonctionnel et confortable, nous avons besoin de différents services que l'on va détailler dans les sous-sections suivantes.
 
-## 2.1. Firewall
+## 3.1. Firewall
 
 Il s'agit de la seule VM qui aura une interface réseau directement sur mon réseau local (interface WAN d'un point de vue Firewall) et de ce fait, obtiendra une IP en 192.168.1.0/24. L'objectif est de gérer les autorisations concernant les communications entrantes et sortantes au niveau du homelab. Le choix technique se portera sur la solution `pfSense`.
 
-## 2.2. Serveur DNS
+## 3.2. Serveur DNS
 
 Le DNS va nous permettre d'utiliser les noms associés à nos VM plutôt que les IP avec deux zones DNS `.homelab` (DNS interne du homelab) ainsi que `ng-hl.com` (le domaine qui portera les services exposés sur mon réseau local). Le choix technique se portera sur la solution `bind9`. 
 
-## 2.3. Machine d'administration centrale
+## 3.3. Machine d'administration centrale
 
 Cette VM sera le point d'entrée vers les ressources du homelab. L'objectif est d'avoir une machine en frontal juste derrière le firewall avec un accès SSH ouvert depuis le WAN (mon réseau local) accessible à certaines IP. Cette machine pourra faire office de rebond et pourra héberger un certain nombre d'outils.
 
-## 2.4. Serveur de gestion des configuration
+## 3.4. Serveur de gestion des configuration
 
 Ce service va nous permettre de déployer les configurations des OS que nous déployons. Les actions seront initialisées manuellement dans un premier temps puis nous pourrons intégrer l'outil au sein d'une pipeline via Gitlab-CI plus tard. Le choix technique se portera sur la solution `Ansible`.
 
-## 2.5. Coffre fort numérique
+## 3.5. Coffre fort numérique
 
 Le coffre-fort numérique va nous permettre de stocker divers mots de passe et secrets. Le choix technique se portera sur `VaultWarden`, solution alternative et open source à BitWarden.
 
-## 2.6. Serveur de versionning
+## 3.6. Serveur de versionning
 
 Le serveur de versionning permettra la centralisation des différents éléments relatifs à notre infrastructure notamment concernant l'infrastructure as code avec OpenTofu et Ansible. De plus, cette VM ouvre la possibilité d'automatiser nos déploiements futurs de VM via les runners et les fonctionnalités de la CI/CD. Le choix technique se portera sur la solution `Gitlab-ce`.
 
-## 2.7. Stack d'observabilité
+## 3.7. Stack d'observabilité
 
 L'objectif est de disposer d'outils nous permettant de monitorer et de superviser les OS et les services grâce à la collecte des métriques ainsi qu'à l'alerting. Le choix technique se portera sur la "suite" `Prometheus/Grafana`.
 
-## 2.8. Dashboard central
+## 3.8. Dashboard central
 
 Afin de faciliter l'administration du homelab et l'utilisation des différents services, nous allons mettre en place un dashboard moderne et confortable afin d'inventorier l'intégralité des services mis à disposition au sein du homelab. Le choix technique se portera sur `Homepage`
 
 ---
 
-# 3. Schéma réseau physique
+# 4. Schéma réseau physique
 
 ![Schéma physique](/images/schema_physique.png)
 
@@ -86,6 +88,8 @@ Afin de faciliter l'administration du homelab et l'utilisation des différents s
 
 # 5. Priorisation
 
+## 5.1 Infrastructure `VM-Factory`
+
 Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services requis, nous allons définir différents niveaux de maturité avec les mises en place des différents services qui y sont associées.
 
 | Niveau     | Description      | Services     | Déploiement
@@ -93,7 +97,7 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
 | 🐟    | Le homelab est fonctionnel, il est possible de déployer des VMs préconfigurées à la main via des templates.      | Firewall, DNS, machine d'administration     | Template de VM sur Proxmox
 | 🐬     | Le déploiement des VM est uniforme et automatisé. La machine de rebond centralisée peut communiquer avec l'entièreté des machines. Le nom de domaine ng-hl.com est en place pour gérer l'exposition des services vers l'extérieur. Un renouvellement automatique du certificat via ACME est également fonctionnel. La stack d'observabilité est en place.   | Gitlab-ce, , Ansible, PKI, certificat wildcard, acme, Prometheus, Grafana, AlertManager     | Template de VM sur Proxmox avec OpenTofu et Ansible dans une pipeline Gitlab CI/CD 
 | 🐳    |  Le dashboard Homepage prêt à l'emploi avec une évolution dynamique. Renforcement de la sécurité avec l'adoption du 0 trust au sein du homelab.     | PKI interne, Homepage, notifications (Discord ?)       | Image préconfigurée sur Proxmox avec OpenTofu et Ansible dans une pipeline Gitlab CI/CD
-
+      
 ---
 
 # 6. Todo lists
@@ -250,10 +254,14 @@ Afin de disposer rapidement d'un homelab fonctionnel avec le minimum de services
     
     - [ ] Pipeline CI/CD "vm-factory"
         - [ ] Proxmox VE
-            - [ ] Création d'un utilisateur dédié `opentofu`
-            - [ ] Application des droits nécessaires
-            - [ ] Génération du token
+            - [x] Création d'un utilisateur dédié `opentofu-deploy`
+            - [x] Application des droits nécessaires
+            - [x] Génération du token
         - [ ] OpenTofu
+            - [ ] Création des fichiers nécessaires pour le déploiements
+                - [ ] variables.tf
+                - [ ] provider.tf
+                - [ ] main.tf
             - [ ] 
 
 ---
