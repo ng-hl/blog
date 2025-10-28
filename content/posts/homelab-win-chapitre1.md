@@ -97,8 +97,8 @@ Comme dans la section précédente, nous allons définir différents niveaux de 
             - [ ] Windows 11
         - [ ] Création des templates
             - [ ] win2022-template
-                - [ ] Activation RDP / WinRM
                 - [ ] Installation des mises à jour
+                - [ ] Activation RDP / WinRM
                 - [ ] Configuration réseau statique avec une IP réservée `172.16.1.100`
                 - [ ] Sysprep
                 - [ ] Conversion en template
